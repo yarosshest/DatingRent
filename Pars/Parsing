@@ -1,0 +1,35 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import NoSuchElementException
+from selenium import webdriver
+import urllib
+import time
+
+print('start...')
+
+site = "https://www.cian.ru/sale/flat/222059642/"
+
+chrome_options = Options()
+chrome_options.add_argument("--headless")
+
+driver = webdriver.Chrome('D:\\chromedriver_win32\\chromedriver.exe')
+#driver = webdriver.Chrome()
+driver.get(site)
+
+i = 0
+
+while True:   
+    try:
+        url = driver.find_element_by_xpath("//div[contains(@class, 'fotorama__active')]/img").get_attribute('src')
+    except NoSuchElementException:  # добавить парсинг голов и текста
+        break        
+
+    i += 1
+    print(i, url)
+
+    driver.find_element_by_xpath("//div[@class='fotorama__arr fotorama__arr--next']").click()
+
+    name = url.split('/')[-1]
+    urllib.request.urlretrieve(url, name)
+
+    time.sleep(2)
