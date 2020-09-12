@@ -16,8 +16,6 @@ template = 'registr.html'
 params = {'name': 'Josh', 'lastname': 'Scogin'}
 t = jinja_env.get_template(template)
 t.render(params)
-session = {}
-session['Login'] = False
 
 # EnterInSystem.DropTable()
 db = EnterInSystem.createBd()
@@ -25,7 +23,7 @@ db = EnterInSystem.createBd()
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if session['Login'] and "email" in session:
+    if 'Login' and "email" in session:
         email = session['email']
         password = session['password']
         EnterInSystem.LoginUser(db, email, password)
@@ -124,4 +122,5 @@ def render(template, **params):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, )
+    app.run(debug=False,host='0.0.0.0')
+    #app.run(debug=True)
