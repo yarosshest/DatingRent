@@ -11,16 +11,93 @@
 				margin-right: auto;
 			}
 		</style>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
     <title>Личный кабинет</title>
 </head>
+
 <body>
 <form method="post">
-    <div class="card bg-dark text-white">
-        <div class="card-img-overlay">
-            <p class="text-center" class="font-weight-bold" class="text-primary"><font size="50" color="blue" face="comic sans" padding="2px">Вы вошли</p>
-            <button class="btn btn-primary" type="submit" name="exit" value="exit">Выйти</button>
-  </div>
-</div>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col col-lg-2">
+            </div>
+            <div class="col-md-auto">
+                <div class="card" style="width: 60rem;" >
+                    <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" >
+                        <div class="carousel-inner" >
+                            <div class="carousel-item active" >
+                                <img src="https://cdn-p.cian.site/images/3/399/788/887993339-1.jpg" class="d-block w-100" alt="..." >
+                            </div>
+                            <div class="carousel-item">
+                                <img src="https://cdn-p.cian.site/images/3/111/888/888111388-1.jpg" class="d-block w-100" alt="...">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="https://cdn-p.cian.site/images/7/211/888/888112709-1.jpg" class="d-block w-100" alt="...">
+                            </div>
+                        </div>
+                        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">8 544 850 ₽</h3>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm">
+                                    <h5 class="card-title">2-комн. квартира</h5>
+                                </div>
+                                <div class="col-sm">
+                                    <h5 class="card-title">35,5 м</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <h8 class="card-title">Речной вокзал ⋅ 14 мин. пешкомХоврино ⋅ 7 мин.</h8>
+                        <h5 class="card-title">{{ price}}</h5>
+                        <p class="card-text">В 2018 завершён капитальный ремонт. Дом индивидуального итальянского проекта - 1 этаж нежилой- на колоннах - благоустроенная входная группа с консьержем, 4 лифта, цветы и пр.
+Хорошая транспортная доступность - в 5 мин на а/м пересечение Северо-Западной и Северо-Восточной ХОРД, с другой стороны в 2 мин выезд на модернизированную Ленинградку.
+Очень приятный для жизни сложившийся район с развитой транспортной и торгово-бытовой инфраструктурой.
+Экологически один из лучших районов Москвы - парк Дружбы, Утиный остров и два гигантских лесопарка: Тимирязевский и крупнейший Главный ботанический сад, также рядом водохранилище и канал им. Москвы (Речной вокзал).
+Два ТРЦ в 3 мин от квартиры на транспорте или а/м или 10-12 мин пешком: ТРЦ Речной - Перекрёсток, М Видео и ещё 136 магазинов, киноцентр, рестораны, кафе, фуд-корт, салоны связи, магазины, аптеки, развлечения и пр. + ТРЦ У Речного - это супермаркет, Техносила и ещё 87 магазинов.
+Дизайнерский и очень качественный ремонт, комфортно, ПОТРЯСАЮЩИЙ БАЛКОН Г-образной формы (12 м) - см. фото, большая жилая площадь с отгороженным подразделением на спальную и гостиную зоны. В квартире всегда очень тихо - окна выходят на тихую сторону в старые многолетние деревья.
+Всё НОВОЕ или в идеальном состоянии:
+кондиционер - бесшумная сплит-система; в с/узле и на кухне керамогранитный пол (в жилой комнате натуральный паркет; потолки с точечным LED освещением, вся мебель новая; новые удобные окна; дизайнерский кож диван, удобная двуспальная ортопедическая кровать с многослойным матрацем (+подушки, одеяла, покрывало), большой с зеркальными и чёрного стекла дверями шкаф-гардероб в прихожей и ещё шкаф в спальне; с полным набором бытовой техники, новый холодильник, духовой шкаф с СВЧ; посудомоечная машина, большая стеклокерамическая сенсорная варочная поверхность, сенсорная вытяжка, новая столовая мебель, стеклянный стол и 2 белых кожаных стула; НОВЫЕ: утюг, гладильная доска, пылесос; большой 50 дюймовый LCD телевизор последнего поколения, цифровое TV со всеми эфирными и кабельными каналами; быстрый internet 300 Mb/s.
+Все (кроме счетчиков) ЖКХ услуги включены в цену.</p>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3">
+                            <label class="form-check-label" for="inlineRadio2">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value="option4">
+                            <label class="form-check-label" for="inlineRadio2">4</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio5" value="option5">
+                            <label class="form-check-label" for="inlineRadio2">5</label>
+                        </div>
+                        <button class="btn btn-success" name="search" value="search">Оценить</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col col-lg-2">
+
+            </div>
+        </div>
+        <button class="btn btn-danger"  name="exit" value="exit">Выйти</button>
+
 </form>
 </body>
 </html>

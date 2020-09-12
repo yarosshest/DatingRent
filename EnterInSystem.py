@@ -24,8 +24,6 @@ class Users(Base):
         self.Password = Password
 
 
-
-
 class Sessions(Base):
     __tablename__ = 'Sessions'
     id = Column(Integer, primary_key=True)
@@ -41,6 +39,18 @@ class Sessions(Base):
     def __repr__(self):
         return "%s to %s" % (self.start_time, self.finish_time)
 
+
+class Apartments(Base):
+    __tablename__ = 'Apartments'
+    id = Column(Integer, primary_key=True)
+    price = Column(Integer)
+    address = Column(String)
+    undergrounds = Column(String)
+    description = Column(String)
+    photo = Column(String)
+    room = Column(String)
+    area = Column(String)
+    link = Column(String)
 
 class DatabaseFuction(object):
     def __init__(self):
@@ -82,7 +92,6 @@ class DatabaseFuction(object):
         session.close()
         return Exist
 
-
     def Register(self, Log, Pass):
         session = self.Session()
         Exist = False
@@ -100,6 +109,10 @@ class DatabaseFuction(object):
             session.close()
             return True
         session.close()
+
+    def RoomForId(self, id):
+        session = self.Session()
+        return session.query(Users).filter_by(id=id).first
 
 
 def LogOutUser(DBase, login):
@@ -121,6 +134,11 @@ def RegisterUser(DBase, login, password):
         return "Register success"
     else:
         return "User already exists"
+
+
+def GetRoomForId(DBase, id):
+    Ap = DBase.RoomForId(id)
+    return [Ap.price, Ap.address, Ap.undergrounds, Ap.discription, Ap.photo, Ap.room, Ap.area]
 
 
 def FullDB(DBase, login, password):

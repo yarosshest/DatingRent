@@ -4,7 +4,7 @@ import os
 import jinja2
 import EnterInSystem
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path="/static")
 
 # сохраняем в строковую переменную
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
@@ -51,16 +51,28 @@ def login():
             return render('login.html')
 
 
-@app.route("/UserLab", methods=['GET', 'POST'])
-def UserLab():
+@app.route("/UserLab", methods = ['POST'])
+def UserLab_post():
     if session['Login']:
         if request.method == 'POST':
-            if "exit" in request.form:
+            if request.form['exit'] == 'exit':
                 email = session['email']
                 EnterInSystem.LogOutUser(db, email)
                 session['Login'] = False
                 return redirect(url_for('login'))
 
+            if "search" in request.form:
+                price, address, undergrounds, discription, photo, room, area = EnterInSystem.GetRoomForId(db, 1)
+                return render('UserLab.html', price=price, address=address, undergrounds=undergrounds, discription=discription, photo=photo, room=room, area=area)
+
+    else:
+        return redirect(url_for('login'))
+
+
+
+@app.route("/UserLab", methods = ['GET'])
+def UserLab():
+    if session['Login']:
         return render('UserLab.html')
     else:
         return redirect(url_for('login'))
