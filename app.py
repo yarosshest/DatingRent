@@ -39,6 +39,7 @@ def login():
             session['email'] = email
             session['password'] = password
             session['Login'] = True
+            session['userId'] = EnterInSystem.getUserId(db,email)
             return redirect(url_for('UserLab'))
         if replay == "Wrong login password":
             return render('login.html', err="Неверный логин пароль")
@@ -55,15 +56,22 @@ def login():
 def UserLab_post():
     if session['Login']:
         if request.method == 'POST':
-            if request.form['exit'] == 'exit':
+            if 'exit' in request.form:
                 email = session['email']
                 EnterInSystem.LogOutUser(db, email)
                 session['Login'] = False
                 return redirect(url_for('login'))
 
             if "search" in request.form:
-                price, address, undergrounds, discription, photo, room, area = EnterInSystem.GetRoomForId(db, 1)
-                return render('UserLab.html', price=price, address=address, undergrounds=undergrounds, discription=discription, photo=photo, room=room, area=area)
+                if request.form['inlineRadioOptions'] != None:
+                    EnterInSystem.rateRoom(db,session['userId'],session['roomID'],int(request.form['inlineRadioOptions']))
+                    price, address, undergrounds, discription, photo, room, area, id = EnterInSystem.GetRoomForId(db, 1)
+                    l = photo.split()
+                    photo1 = l[0]
+                    del l[0]
+                    return render('UserLab.html', price=price, address=address, undergrounds=undergrounds,
+                                  discription=discription,
+                                  photo1=photo1, photoAr=l, room=room, area=area)
 
     else:
         return redirect(url_for('login'))
@@ -73,7 +81,15 @@ def UserLab_post():
 @app.route("/UserLab", methods = ['GET'])
 def UserLab():
     if session['Login']:
-        return render('UserLab.html')
+        price, address, undergrounds, discription, photo, room, area, id = EnterInSystem.GetRoomForId(db, 1)
+        l = photo.split()
+        photo1 = l[0]
+        del l[0]
+        session['roomID'] =id
+
+        return render('UserLab.html', price=price, address=address, undergrounds=undergrounds, discription=discription,
+                      photo1=photo1, photoAr=l, room=room, area=area)
+
     else:
         return redirect(url_for('login'))
 
