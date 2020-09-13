@@ -5,7 +5,7 @@ from selenium import webdriver
 import urllib
 import time
 
-print('start...')
+
 
 site = "https://www.cian.ru/sale/flat/222059642/"
 
@@ -14,22 +14,47 @@ chrome_options.add_argument("--headless")
 
 driver = webdriver.Chrome('D:\\chromedriver_win32\\chromedriver.exe')
 #driver = webdriver.Chrome()
-driver.get(site)
+#driver.get("https://www.cian.ru/cat.php?deal_type=rent&engine_version=2&offer_type=flat&p=2&region=1&type=4")
+driver.get("https://www.cian.ru/rent/flat/240867041/")
 
-i = 0
+#time.sleep(8)
+#href = driver.find_elements_by_xpath('//*[@id="frontend-serp"]/div/div[4]/article[1]/div/div[2]/div[1]/div/a')[0].get_attribute('href')
+#driver.get(href)
 
-while True:   
+obshplo = driver.find_element_by_xpath('//*[@id="description"]/div[1]/div[2]/div[1]/div[1]').text
+jilplo = driver.find_element_by_xpath('//*[@id="description"]/div[1]/div[2]/div[2]/div[1]').text
+kitchen = driver.find_element_by_xpath('//*[@id="description"]/div[1]/div[2]/div[3]/div[1]').text
+level = driver.find_element_by_xpath('//*[@id="description"]/div[1]/div[2]/div[4]/div[1]').text
+datsroi = driver.find_element_by_xpath('//*[@id="description"]/div[1]/div[2]/div[5]/div[1]').text
+opisanie = driver.find_element_by_xpath('//*[@id="description"]/div[2]/div/div/span/p').text
+price = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[3]/div/div[1]/div[1]/div[1]/div/div[1]/div/span/span[1]').text
+
+town = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[1]').text
+okreg = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[2]').text
+street = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[3]').text
+street2 = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[4]').text
+domnum = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[5]').text
+adress = town + ' ' + okreg + ' ' + street + ' ' + street2 + ' ' + domnum
+
+colcomn = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/h1').text
+colcomn[:0]
+
+metro = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/ul[1]/li[1]/a').text
+metrotime = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/ul[1]/li[1]/span').text
+
+fotoochka =''
+print(obshplo, ' ', jilplo, ' ', kitchen, ' ', level, ' ', datsroi)
+print(price, ' ', adress)
+print(metro, ' ', metrotime)
+while True:
     try:
         url = driver.find_element_by_xpath("//div[contains(@class, 'fotorama__active')]/img").get_attribute('src')
-    except NoSuchElementException:  # добавить парсинг голов и текста
-        break        
-
-    i += 1
-    print(i, url)
-
+    except NoSuchElementException:
+        break
     driver.find_element_by_xpath("//div[@class='fotorama__arr fotorama__arr--next']").click()
 
-    name = url.split('/')[-1]
-    urllib.request.urlretrieve(url, name)
+    fotoochka = fotoochka + url+ ' '
 
-    time.sleep(2)
+    time.sleep(0.5)
+
+print(fotoochka)
