@@ -43,9 +43,10 @@ metro = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]
 metrotime = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/ul[1]/li[1]/span').text
 
 fotoochka =''
-print(obshplo, ' ', jilplo, ' ', kitchen, ' ', level, ' ', datsroi)
-print(price, ' ', adress)
-print(metro, ' ', metrotime)
+#print(obshplo, ' ', jilplo, ' ', kitchen, ' ', level, ' ', datsroi)
+#print(price, ' ', adress)
+#print(metro, ' ', metrotime)
+
 while True:
     try:
         url = driver.find_element_by_xpath("//div[contains(@class, 'fotorama__active')]/img").get_attribute('src')
@@ -54,7 +55,7 @@ while True:
     driver.find_element_by_xpath("//div[@class='fotorama__arr fotorama__arr--next']").click()
 
     fotoochka = fotoochka + url+ ' '
+#    print(fotoochka)
 
-    time.sleep(0.5)
+    time.sleep(2)
 
-print(fotoochka)
