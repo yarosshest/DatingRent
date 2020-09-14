@@ -64,6 +64,6 @@ for i in range(x):
     driver.find_element_by_xpath('//div[@class="fotorama__arr fotorama__arr--next"]').click()
     fotoochka = fotoochka + url+ ' '
 #    print(fotoochka)
-    time.sleep(1)
+    time.sleep(0.03)
 
 print(fotoochka)
