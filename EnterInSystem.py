@@ -38,12 +38,18 @@ class Sessions(Base):
     def __repr__(self):
         return "%s to %s" % (self.start_time, self.finish_time)
 
+
 class Rates(Base):
     __tablename__ = 'Rates'
     id = Column(Integer, primary_key=True)
     Users_id = Column(Integer, ForeignKey('Users.id'))
     Apartments_id = Column(Integer, ForeignKey('Apartments.id'))
     rate = Column(Integer)
+
+    def __init__(self, idU, idA, rate):
+        self.Users_id = idU
+        self.Apartments_id = idA
+        self.rate = rate
 
 
 class Apartments(Base):
@@ -57,6 +63,17 @@ class Apartments(Base):
     room = Column(String)
     area = Column(String)
     link = Column(String)
+
+    def __init__(self, price, address, undergrounds, discription, photo, room, area, link):
+        self.price = price
+        self.address = address
+        self.undergrounds = undergrounds
+        self.discription = discription
+        self.photo = photo
+        self.room = room
+        self.area = area
+        self.link = link
+
 
 class DatabaseFuction(object):
     def __init__(self):
@@ -125,12 +142,12 @@ class DatabaseFuction(object):
 
     def Rate(self, idU, idA, rateScore):
         session = self.Session()
-        rate = Rates(Users_id=idU, Apartments_id=idA, rate=rateScore)
+        rate = Rates(idU, idA, rateScore)
         session.add(rate)
         session.commit()
         session.close()
 
-    def UserId(self,Log):
+    def UserId(self, Log):
         session = self.Session()
         for instance in session.query(Users.Login, Users.Password, Users.id):
             if (instance.Login == Log):
@@ -138,12 +155,22 @@ class DatabaseFuction(object):
         session.close()
         return id
 
+    def addRoom(self, price, address, undergrounds, discription, photo, room, area, link):
+        session = self.Session()
+
+        NewRoom = Apartments(price, address, undergrounds, discription, photo, room, area, link)
+
+        session.add(NewRoom)
+        session.commit()
+        session.close()
+
 
 def LogOutUser(DBase, login):
     DBase.LogOut(login)
     return True
 
-def getUserId(DBase,login):
+
+def getUserId(DBase, login):
     return DBase.UserId(login)
 
 
@@ -171,16 +198,20 @@ def FullDB(DBase, login, password):
     DBase.Insert(login, password)
 
 
+def createRoom(DBase, price, address, undergrounds, discription, photo, room, area, link):
+    DBase.addRoom(price, address, undergrounds, discription, photo, room, area, link)
+
+
 def createBd():
     Base.metadata.create_all(engine)
     DBase = DatabaseFuction()
     return DBase
 
-def rateRoom(DBase,idU, idA, rate):
+
+def rateRoom(DBase, idU, idA, rate):
     DBase.Rate(idU, idA, rate)
+
 
 def DropTable():
     Users.__table__.drop(engine)
     Sessions.__table__.drop(engine)
-
-

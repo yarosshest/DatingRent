@@ -11,6 +11,10 @@ import time
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.webdriver import WebDriver
 
+import EnterInSystem
+
+db = EnterInSystem.createBd()
+
 site = "https://www.cian.ru/sale/flat/222059642/"
 
 chrome_options = Options()
@@ -67,3 +71,7 @@ for i in range(x):
     time.sleep(0.03)
 
 print(fotoochka)
+
+
+undergrounds = metro + " " +metrotime
+EnterInSystem.createRoom(db, price, adress, undergrounds, opisanie, fotoochka, colcomn, obshplo, site)
