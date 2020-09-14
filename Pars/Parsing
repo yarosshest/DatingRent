@@ -1,23 +1,27 @@
+from idlelib import browser
+
 from selenium import webdriver
+from selenium.webdriver import chrome
+from selenium.webdriver.android.webdriver import WebDriver
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 from selenium import webdriver
 import urllib
 import time
-
-
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.chrome.webdriver import WebDriver
 
 site = "https://www.cian.ru/sale/flat/222059642/"
 
 chrome_options = Options()
 chrome_options.add_argument("--headless")
 
-driver = webdriver.Chrome('D:\\chromedriver_win32\\chromedriver.exe')
+driver: WebDriver = webdriver.Chrome('D:\\chromedriver_win32\\chromedriver.exe')
 #driver = webdriver.Chrome()
 #driver.get("https://www.cian.ru/cat.php?deal_type=rent&engine_version=2&offer_type=flat&p=2&region=1&type=4")
 driver.get("https://www.cian.ru/rent/flat/240867041/")
 
-#time.sleep(8)
+#time.sleep(5)
 #href = driver.find_elements_by_xpath('//*[@id="frontend-serp"]/div/div[4]/article[1]/div/div[2]/div[1]/div/a')[0].get_attribute('href')
 #driver.get(href)
 
@@ -42,20 +46,24 @@ colcomn[:0]
 metro = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/ul[1]/li[1]/a').text
 metrotime = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/ul[1]/li[1]/span').text
 
+colvo = driver.find_element_by_xpath('//*[@id="photos"]/div[2]/div/div[2]').text
+x = int(colvo.split()[0])
+
 fotoochka =''
 #print(obshplo, ' ', jilplo, ' ', kitchen, ' ', level, ' ', datsroi)
 #print(price, ' ', adress)
 #print(metro, ' ', metrotime)
 
-while True:
-    try:
-        url = driver.find_element_by_xpath("//div[contains(@class, 'fotorama__active')]/img").get_attribute('src')
-    except NoSuchElementException:
-        break
-    driver.find_element_by_xpath("//div[@class='fotorama__arr fotorama__arr--next']").click()
+for i in range(x):
+    url = driver.find_element_by_xpath("//div[contains(@class, 'fotorama__active')]/img").get_attribute('src')
 
+    element_to_hover_over = driver.find_element_by_xpath('//*[@id="frontend-offer-card-fotorama"]/div/div[1]/div[1]')
+    hover = ActionChains(driver).move_to_element(element_to_hover_over)
+    hover.perform()
+
+    driver.find_element_by_xpath('//div[@class="fotorama__arr fotorama__arr--next"]').click()
     fotoochka = fotoochka + url+ ' '
 #    print(fotoochka)
+    time.sleep(1)
 
-    time.sleep(2)
-
+print(fotoochka)
