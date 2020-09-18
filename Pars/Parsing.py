@@ -23,7 +23,7 @@ for site in db.getAllLinks():
     driver: WebDriver = webdriver.Chrome('D:\\chromedriver_win32\\chromedriver.exe')
     #driver = webdriver.Chrome()
 
-    driver.get("https://www.cian.ru/rent/flat/240867041/")
+    driver.get(site)
 
     obshplo = driver.find_element_by_xpath('//*[@id="description"]/div[1]/div[2]/div[1]/div[1]').text
     jilplo = driver.find_element_by_xpath('//*[@id="description"]/div[1]/div[2]/div[2]/div[1]').text

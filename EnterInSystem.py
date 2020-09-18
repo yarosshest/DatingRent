@@ -8,7 +8,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from sqlalchemy.dialects.sqlite import DATETIME
 
-engine = create_engine('sqlite:///some.db', echo=False)
+engine = create_engine('sqlite:///links.db', echo=False)
 Base = declarative_base()
 
 
@@ -75,7 +75,7 @@ class Apartments(Base):
         self.link = link
 
 class Links(Base):
-    __tablename__ = 'Apartments'
+    __tablename__ = 'Links'
     id = Column(Integer, primary_key=True)
     link = Column(String)
 
