@@ -1,4 +1,6 @@
 from idlelib import browser
+
+import selenium
 from selenium import webdriver
 from selenium.webdriver import chrome
 from selenium.webdriver.android.webdriver import WebDriver
@@ -18,40 +20,50 @@ import requests
 driver: WebDriver = webdriver.Chrome('D:\\chromedriver_win32\\chromedriver.exe')
 
 driver.get("https://www.cian.ru/snyat-kvartiru/")
-heig = 480
-heig1 = 0
-i=0
-try:
-    element_to_hover_over = driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div[6]/div['+str(i+1)+']/div/div[1]')
-except NoSuchElementException:
-    for i in range(27):
-        element_to_hover_over = driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div[6]/article['+str(i+1)+']')
-        hover = ActionChains(driver).move_to_element(element_to_hover_over) #//*[@id="frontend-serp"]/div/div[6]/div[6]/div/div[1]
-        hover.perform()
-        driver.execute_script("window.scrollTo(" + str(heig1) + ", " + str(heig) +")")
-        heig+=480
-        heig1+=480
-        time.sleep(1)
-        #href = driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div[6]/div[1]/div/div[1]/div/div[2]/div[1]/div[1]/div[1]/div/a').get_attribute('href')
-        href = driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div[6]/article['+str(i+1)+']/div/div[2]/div[1]/div/a').get_attribute('href')
+driver.set_window_size(1920,1080)
 
-        print(href)
-        print()
-else:
-    for i in range(27):
-        #if i==3:
-        #    i=4
-        #if i==6:
-        #    i=7
-        element_to_hover_over = driver.find_element_by_xpath('//*[@name="TopOfferCard"]')
-        hover = ActionChains(driver).move_to_element(element_to_hover_over)  # //*[@id="frontend-serp"]/div/div[6]/div[16]/div/div[1]] //*[@id="frontend-serp"]/div/div[6]/article[1]/div
-        hover.perform()
-        heig += 480
-        heig1 += 480
-        time.sleep(1)
-        href = driver.find_element_by_xpath('//*[@name="LinkArea"]').get_attribute('href')
-        #href = driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div[6]/article[' + str(i + 1) + ']/div/div[2]/div[1]/div/a').get_attribute('href')
-        print(href)
-        driver.execute_script("window.scrollTo(" + str(heig1) + ", " + str(heig) + ")")
-        print()
 
+j=2
+costil = 7
+while True:
+        if j>2:
+            costil=6
+        i = 0
+        try:
+            element_to_hover_over = driver.find_element_by_xpath('//*[@data-name="TopOfferCard"]')
+        except NoSuchElementException:
+            for i in range(27):
+                element_to_hover_over = driver.find_elements_by_xpath('//*[@data-name="CardComponent"]')[i]
+                hover = ActionChains(driver).move_to_element(element_to_hover_over)
+                hover.perform()
+
+                time.sleep(0.05)
+                href = driver.find_elements_by_xpath('//*[@class="_93444fe79c--link--39cNw"]')[i].get_attribute('href')
+
+                print(href)
+                print()
+            element_to_hover_over = driver.find_element_by_xpath('//*[@data-name="Pagination"]')
+            hover = ActionChains(driver).move_to_element(element_to_hover_over)
+            hover.perform()
+            driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div['+str(costil)+']/div/ul/li[' + str(j) + ']/a').click()
+            if j<11:
+                j+=1
+            time.sleep(2)
+        else:
+            for i in range(27):
+                element_to_hover_over = driver.find_elements_by_xpath('//*[@data-name="TopOfferCard"]')[i]
+                hover = ActionChains(driver).move_to_element(element_to_hover_over)
+                hover.perform()
+
+                time.sleep(0.05)
+                href = driver.find_elements_by_xpath('//*[@class="c6e8ba5398--header--1fV2A"]')[i].get_attribute('href')
+                print(href)
+                print()
+
+            element_to_hover_over = driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div['+str(costil)+']/div/ul')
+            hover = ActionChains(driver).move_to_element(element_to_hover_over)
+            hover.perform()
+            driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div['+str(costil)+']/div/ul/li[' + str(j) + ']/a').click()
+            if j < 11:
+                j += 1
+        time.sleep(2)
