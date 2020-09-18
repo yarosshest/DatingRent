@@ -94,4 +94,5 @@ for site in db.getAllLinks():
         time.sleep(0.03)
 
     undergrounds = metro + " " + metrotime
-    EnterInSystem.createRoom(db, price, adress, undergrounds, opisanie, fotoochka, colcomn, obshplo, site)
+    if db.RoomChek(site):
+        EnterInSystem.createRoom(db, price, adress, undergrounds, opisanie, fotoochka, colcomn, obshplo, site)

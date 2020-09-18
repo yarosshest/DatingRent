@@ -172,7 +172,6 @@ class DatabaseFuction(object):
 
     def addRoom(self, price, address, undergrounds, discription, photo, room, area, link):
         session = self.Session()
-
         NewRoom = Apartments(price, address, undergrounds, discription, photo, room, area, link)
 
         session.add(NewRoom)
@@ -200,8 +199,18 @@ class DatabaseFuction(object):
 
     def linkChek(self,link):
         session = self.Session()
-        r  = session.query(Links).filter(Links.link == link)
-        if r.count()>=1:
+        r = session.query(Links).filter(Links.link == link)
+        if r.count() >= 1:
+            session.close()
+            return False
+        else:
+            session.close()
+            return True
+
+    def RoomChek(self,link):
+        session = self.Session()
+        r = session.query(Apartments).filter(Apartments.link == link)
+        if r.count() >= 1:
             session.close()
             return False
         else:
