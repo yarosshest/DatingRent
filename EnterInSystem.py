@@ -74,6 +74,15 @@ class Apartments(Base):
         self.area = area
         self.link = link
 
+class Links(Base):
+    __tablename__ = 'Apartments'
+    id = Column(Integer, primary_key=True)
+    link = Column(String)
+
+    def __init__(self, link):
+        self.link = link
+
+
 
 class DatabaseFuction(object):
     def __init__(self):
@@ -163,6 +172,26 @@ class DatabaseFuction(object):
         session.add(NewRoom)
         session.commit()
         session.close()
+
+
+    def addLink(self, link):
+        session = self.Session()
+
+        NewLink = Links(link)
+
+        session.add(NewLink)
+        session.commit()
+        session.close()
+
+    def getAllLinks(self):
+        session = self.Session()
+        l =[]
+        for instance in session.query(Links.link):
+            l.append(instance.link)
+
+        session.close()
+        return l
+
 
 
 def LogOutUser(DBase, login):

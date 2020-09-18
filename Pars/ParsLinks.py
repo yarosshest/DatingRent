@@ -17,10 +17,17 @@ from bs4 import BeautifulSoup
 import EnterInSystem
 import requests
 
+import EnterInSystem
+
+db = EnterInSystem.createBd()
+
+
+
 driver: WebDriver = webdriver.Chrome('D:\\chromedriver_win32\\chromedriver.exe')
 
 driver.get("https://www.cian.ru/snyat-kvartiru/")
 driver.set_window_size(1920,1080)
+
 
 
 j=2
@@ -36,6 +43,7 @@ while True:
 
             time.sleep(0.05)
             href = driver.find_elements_by_xpath('//*[@class="c6e8ba5398--header--1fV2A"]')[i].get_attribute('href')
+            db.addLink(href)
             print(href)
             print()
 
