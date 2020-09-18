@@ -23,11 +23,11 @@ db = EnterInSystem.createBd()
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if 'Login' and "email" in session:
+    if session['Login']:
         email = session['email']
         password = session['password']
         EnterInSystem.LoginUser(db, email, password)
-        return redirect(url_for('UserLab'))
+        return redirect(url_for('Filtr'))
 
     if request.method == 'POST':
         email = request.form['Email']
@@ -38,7 +38,7 @@ def login():
             session['password'] = password
             session['Login'] = True
             session['userId'] = EnterInSystem.getUserId(db,email)
-            return redirect(url_for('UserLab'))
+            return redirect(url_for('Filtr'))
         if replay == "Wrong login password":
             return render('login.html', err="Неверный логин пароль")
     else:
@@ -60,6 +60,9 @@ def UserLab_post():
                 session['Login'] = False
                 return redirect(url_for('login'))
 
+            if 'filter' in request.form:
+                return redirect(url_for('Filtr'))
+
             if "search" in request.form:
                 if request.form['inlineRadioOptions'] != None:
                     EnterInSystem.rateRoom(db,session['userId'],session['roomID'],int(request.form['inlineRadioOptions']))
@@ -74,7 +77,25 @@ def UserLab_post():
     else:
         return redirect(url_for('login'))
 
+@app.route("/Filtr", methods=['GET'])
+def FiltrGET():
+    if session['Login']:
+        return render('Filtr.html')
+    else:
+        return redirect(url_for('login'))
 
+@app.route("/Filtr", methods=['POST'])
+def Filtr():
+    if session['Login']:
+        if 'MaxAmount' in request.form:
+            session['MaxAmount'] = request.form['MaxAmount']
+        if 'KolRoom' in request.form:
+            session['KolRoom'] = request.form['KolRoom']
+        if 'Metro' in request.form:
+            session['Metro'] = request.form['Metro']
+        return redirect(url_for('UserLab'))
+    else:
+        return redirect(url_for('login'))
 
 @app.route("/UserLab", methods = ['GET'])
 def UserLab():
@@ -122,5 +143,5 @@ def render(template, **params):
 
 
 if __name__ == '__main__':
-    app.run(debug=False,host='0.0.0.0')
-    #app.run(debug=True)
+    #app.run(debug=False,host='0.0.0.0')
+    app.run(debug=True)
