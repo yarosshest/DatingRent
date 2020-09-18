@@ -5,11 +5,17 @@ from sqlalchemy import create_engine, DateTime, func
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship, backref
+from sqlalchemy.orm import sessionmaker, relationship, backref, Query
+from sqlalchemy.sql import select
 from sqlalchemy.dialects.sqlite import DATETIME
+from sqlalchemy import func
+
+
 
 engine = create_engine('sqlite:///links.db', echo=False)
 Base = declarative_base()
+
+
 
 
 class Users(Base):
@@ -191,6 +197,16 @@ class DatabaseFuction(object):
 
         session.close()
         return l
+
+    def linkChek(self,link):
+        session = self.Session()
+        r  = session.query(Links).filter(Links.link == link)
+        if r.count()>=1:
+            session.close()
+            return False
+        else:
+            session.close()
+            return True
 
 
 
