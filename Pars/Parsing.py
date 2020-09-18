@@ -22,17 +22,8 @@ chrome_options.add_argument("--headless")
 
 driver: WebDriver = webdriver.Chrome('D:\\chromedriver_win32\\chromedriver.exe')
 #driver = webdriver.Chrome()
-#driver.get("https://www.cian.ru/cat.php?deal_type=rent&engine_version=2&offer_type=flat&p=2&region=1&type=4")
+
 driver.get("https://www.cian.ru/rent/flat/240867041/")
-
-#time.sleep(5)
-#href = driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div[4]/div[1]/div/div[1]/div/div[2]/div[1]/div[1]/div[1]/div/a/div/div[1]').get_attribute('href')
-#driver.get(href)
-#element_to_hover_over = driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div[4]/div[1]/div/div[1]')
-#hover = ActionChains(driver).move_to_element(element_to_hover_over)
-#hover.perform()
-#driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div[4]/div[1]/div/div[1]/div/div[2]/div[1]/div[1]/div[1]/div/a/div/div[1]').click()
-
 
 obshplo = driver.find_element_by_xpath('//*[@id="description"]/div[1]/div[2]/div[1]/div[1]').text
 jilplo = driver.find_element_by_xpath('//*[@id="description"]/div[1]/div[2]/div[2]/div[1]').text
@@ -63,6 +54,28 @@ print(obshplo, ' ', jilplo, ' ', kitchen, ' ', level, ' ', datsroi)
 print(price, ' ', adress)
 print(metro, ' ', metrotime)
 
+ucan = '' #можно с детьми / животными
+try:
+    element_to_hover_over = driver.find_element_by_xpath('//*[@data-name="Tenants"]')
+except NoSuchElementException:
+    ucan = ''
+else:
+    coll = len(driver.find_elements_by_xpath('//*[contains(@class,"a10a3f92e9--item--21VpQ a10a3f92e9")]'))
+    for i in range(coll):
+        ucan = ucan + driver.find_elements_by_xpath('//*[contains(@class,"a10a3f92e9--item--21VpQ a10a3f92e9")]')[i-1].text+'/'
+print(ucan)
+
+items = '' #итемы квартиры
+try:
+    element_to_hover_over = driver.find_element_by_xpath('//*[@data-name="Features"]')
+except NoSuchElementException:
+    items = ''
+else:
+    coll = len(driver.find_elements_by_xpath('//*[@data-name="FeatureItem"]'))
+    for i in range(coll-1):
+        items = items + driver.find_elements_by_xpath('//*[@data-name="FeatureItem"]')[i].text+'/'
+print(items)
+
 for i in range(x):
     url = driver.find_element_by_xpath("//div[contains(@class, 'fotorama__active')]/img").get_attribute('src')
 
@@ -73,10 +86,7 @@ for i in range(x):
     driver.find_element_by_xpath('//div[@class="fotorama__arr fotorama__arr--next"]').click()
     fotoochka = fotoochka + url+ ' '
 #    print(fotoochka)
-    time.sleep(0.03)
-
-print(fotoochka)
-
+    time.sleep(0.05)
 
 undergrounds = metro + " " +metrotime
 EnterInSystem.createRoom(db, price, adress, undergrounds, opisanie, fotoochka, colcomn, obshplo, site)
