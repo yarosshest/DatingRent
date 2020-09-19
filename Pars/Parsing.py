@@ -78,9 +78,6 @@ colcomn = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[
 metro = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/ul[1]/li[1]/a').text
 metrotime = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/ul[1]/li[1]/span').text
 
-colvo = driver.find_element_by_xpath('//*[@id="photos"]/div[2]/div/div[2]').text
-x = int(colvo.split()[0])
-
 fotoochka =''
 print(obshplo)
 print(price, ' ', adress)
@@ -107,6 +104,15 @@ else:
     for i in range(coll-1):
         items = items + driver.find_elements_by_xpath('//*[@data-name="FeatureItem"]')[i].text+'/'
 print(items)
+
+colvo = driver.find_element_by_xpath('//*[@id="photos"]/div[2]/div/div[2]').text
+x = colvo.split()[0]
+try:
+    int(x)
+except ValueError:
+    colvo = driver.find_element_by_xpath('//*[@id="photos"]/div[2]/div[2]/div[2]').text
+    x = int(colvo.split()[0])
+
 
 for i in range(x):
     url = driver.find_element_by_xpath("//div[contains(@class, 'fotorama__active')]/img").get_attribute('src')
