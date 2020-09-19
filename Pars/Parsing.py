@@ -29,16 +29,59 @@ for site in db.getAllLinks():
         price = driver.find_element_by_xpath(
             '//*[@id="frontend-offer-card"]/main/div[3]/div/div[1]/div[1]/div[1]/div/div[1]/div/span/span[1]').text
 
-        town = driver.find_element_by_xpath(
-            '//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[1]').text
-        okreg = driver.find_element_by_xpath(
-            '//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[2]').text
-        street = driver.find_element_by_xpath(
-            '//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[3]').text
-        street2 = driver.find_element_by_xpath(
-            '//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[4]').text
-        domnum = driver.find_element_by_xpath(
-            '//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[5]').text
+        try:
+            driver.find_element_by_xpath(
+                '//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[1]')
+        except NoSuchElementException:
+            town = ''
+        else:
+            town = driver.find_element_by_xpath(
+                '//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[1]').text
+        try:
+            driver.find_element_by_xpath(
+                '//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[1]')
+        except NoSuchElementException:
+            town = ''
+        else:
+            town = driver.find_element_by_xpath(
+                '//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[1]').text
+
+        try:
+            driver.find_element_by_xpath(
+                '//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[2]')
+        except NoSuchElementException:
+            okreg = ''
+        else:
+            okreg = driver.find_element_by_xpath(
+                '//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[2]').text
+
+        try:
+            driver.find_element_by_xpath(
+                '//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[3]')
+        except NoSuchElementException:
+            street = ''
+        else:
+            street = driver.find_element_by_xpath(
+                '//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[3]').text
+
+        try:
+            driver.find_element_by_xpath(
+                '//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[4]')
+        except NoSuchElementException:
+            street2 = ''
+        else:
+            street2 = driver.find_element_by_xpath(
+                '//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[4]').text
+
+        try:
+            driver.find_element_by_xpath(
+                '//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[5]')
+        except NoSuchElementException:
+            domnum = ''
+        else:
+            domnum = driver.find_element_by_xpath(
+                '//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[5]').text
+
         adress = town + ' ' + okreg + ' ' + street + ' ' + street2 + ' ' + domnum
 
         colcomn = driver.find_element_by_xpath(
@@ -49,13 +92,10 @@ for site in db.getAllLinks():
         metrotime = driver.find_element_by_xpath(
             '//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/ul[1]/li[1]/span').text
 
-        colvo = driver.find_element_by_xpath('//*[@id="photos"]/div[2]/div/div[2]').text
-        x = int(colvo.split()[0])
-
         fotoochka = ''
-        print(obshplo)
-        print(price, ' ', adress)
-        print(metro, ' ', metrotime)
+        # print(obshplo)
+        # print(price, ' ', adress)
+        # print(metro, ' ', metrotime)
 
         ucan = ''  # можно с детьми / животными
         try:
@@ -68,7 +108,7 @@ for site in db.getAllLinks():
                 ucan = ucan + \
                        driver.find_elements_by_xpath('//*[contains(@class,"a10a3f92e9--item--21VpQ a10a3f92e9")]')[
                            i - 1].text + '/'
-        print(ucan)
+        # print(ucan)
 
         items = ''  # итемы квартиры
         try:
@@ -79,7 +119,15 @@ for site in db.getAllLinks():
             coll = len(driver.find_elements_by_xpath('//*[@data-name="FeatureItem"]'))
             for i in range(coll - 1):
                 items = items + driver.find_elements_by_xpath('//*[@data-name="FeatureItem"]')[i].text + '/'
-        print(items)
+        # print(items)
+
+        colvo = driver.find_element_by_xpath('//*[@id="photos"]/div[2]/div/div[2]').text
+        x = colvo.split()[0]
+        try:
+            int(x)
+        except ValueError:
+            colvo = driver.find_element_by_xpath('//*[@id="photos"]/div[2]/div[2]/div[2]').text
+            x = int(colvo.split()[0])
 
         for i in range(x):
             url = driver.find_element_by_xpath("//div[contains(@class, 'fotorama__active')]/img").get_attribute('src')
@@ -91,7 +139,7 @@ for site in db.getAllLinks():
 
             driver.find_element_by_xpath('//div[@class="fotorama__arr fotorama__arr--next"]').click()
             fotoochka = fotoochka + url + ' '
-            #    print(fotoochka)
+            # print(fotoochka)
             time.sleep(0.03)
 
         undergrounds = metro + " " + metrotime

@@ -53,10 +53,11 @@ while True:
             #print(href)
             #print()
 
-        element_to_hover_over = driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div['+str(costil)+']/div/ul')
+        element_to_hover_over = driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div[' + str(costil) + ']/div/ul')
         hover = ActionChains(driver).move_to_element(element_to_hover_over)
         hover.perform()
-        driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div['+str(costil)+']/div/ul/li[' + str(j) + ']/a').click()
+        driver.find_element_by_xpath(
+            '//*[@id="frontend-serp"]/div/div[' + str(costil) + ']/div/ul/li[' + str(j) + ']/a').click()
         if j < 11:
             j += 1
         time.sleep(2)
