@@ -28,17 +28,17 @@ driver: WebDriver = webdriver.Chrome('D:\\chromedriver_win32\\chromedriver.exe')
 driver.get("https://www.cian.ru/snyat-kvartiru/")
 driver.set_window_size(1920,1080)
 
-mini = 0
+mini = 27000
 maxi = 27000
 
 while maxi<7000000:
-    driver.find_element_by_name('max').clear()
+    driver.find_element_by_id('max-0').clear()
     driver.find_element_by_name('max').send_keys(maxi)
-    driver.find_element_by_name('min').clear()
+    driver.find_element_by_id('min-0').clear()
     driver.find_element_by_name('min').send_keys(mini)
     time.sleep(2)
 
-    element_to_hover_over = driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div[2]/div/div/div/div/div[2]/div[5]/div')
+    element_to_hover_over = driver.find_element_by_xpath('//button[contains(text(),"Показать")]')
     hover = ActionChains(driver).move_to_element(element_to_hover_over)
     hover.perform()
     driver.find_element_by_xpath('//button[contains(text(),"Показать")]').click()
@@ -56,71 +56,49 @@ while maxi<7000000:
 
     flag = True
     while flag:
-            i = 0
-            k=0
-            costil1 = 0
-            costil2 = 0
-            for i in range(27):
-                try:
-                    element_to_hover_over = driver.find_element_by_xpath('//*[@data-name="TopOfferCard"]')
-                except NoSuchElementException:
-                    k+=1
-                else:
-                    element_to_hover_over = driver.find_elements_by_xpath('//*[@data-name="TopOfferCard"]')[i-costil2]
-                    hover = ActionChains(driver).move_to_element(element_to_hover_over)
-                    hover.perform()
+            topcol = len(driver.find_elements_by_xpath('//*[@data-name="TopOfferCard"]'))
+            for i in range(topcol-1):
+                # element_to_hover_over = driver.find_elements_by_xpath('//*[@data-name="TopOfferCard"]')[i]
+                # hover = ActionChains(driver).move_to_element(element_to_hover_over)
+                # hover.perform()
 
-                    time.sleep(0.05)
-                    href = driver.find_elements_by_xpath('//*[@class="c6e8ba5398--header--1fV2A"]')[i].get_attribute('href')
-                    db.addLink(href)
-                    print(href)
-                    print()
-                    costil1+=1
+                href = driver.find_elements_by_xpath('//*[@class="c6e8ba5398--header--1fV2A"]')[i].get_attribute('href')
+                db.addLink(href)
+                print(href)
+                print()
 
-                try:
-                    element_to_hover_over = driver.find_element_by_xpath('//*[@data-name="OfferCard"]')
-                except NoSuchElementException:
-                    k+=1
-                else:
-                    element_to_hover_over = driver.find_elements_by_xpath('//*[@data-name="OfferCard"]')[i-costil1]
-                    hover = ActionChains(driver).move_to_element(element_to_hover_over)
-                    hover.perform()
+            # offercol = len(driver.find_elements_by_xpath('//*[@data-name="OfferCard"]'))
+            # for i in range(offercol-1):
+            #     element_to_hover_over = driver.find_elements_by_xpath('//*[@data-name="OfferCard"]')[i]
+            #     hover = ActionChains(driver).move_to_element(element_to_hover_over)
+            #     hover.perform()
+            #
+            #     time.sleep(0.05)
+            #     href = driver.find_elements_by_xpath('//*[@class="c6e8ba5398--header--1fV2A"]')[i+topcol].get_attribute('href')
+            #     db.addLink(href)
+            #     print(href)
+            #     print()
 
-                    time.sleep(0.05)
-                    href = driver.find_elements_by_xpath('//*[@class="c6e8ba5398--header--1fV2A"]')[i].get_attribute('href')
-                    db.addLink(href)
-                    print(href)
-                    print()
-                    costil2+=1
+            cardcol = len(driver.find_elements_by_xpath('//*[@data-name="CardComponent"]'))
+            for i in range(cardcol-1):
+                # element_to_hover_over = driver.find_elements_by_xpath('//*[@data-name="CardComponent"]')[i]
+                # hover = ActionChains(driver).move_to_element(element_to_hover_over)
+                # hover.perform()
 
-                try:
-                    element_to_hover_over = driver.find_element_by_xpath('//*[@data-name="CardComponent"]')
-                except NoSuchElementException:
-                    k+=1
-                else:
-                    element_to_hover_over = driver.find_elements_by_xpath('//*[@data-name="CardComponent"]')[i]
-                    hover = ActionChains(driver).move_to_element(element_to_hover_over)
-                    hover.perform()
-
-                    time.sleep(0.05)
-                    href = driver.find_elements_by_xpath('//*[@class="c6e8ba5398--header--1fV2A"]')[i].get_attribute('href')
-                    db.addLink(href)
-                    print(href)
-                    print()
-
-            if k == 3:
-                break
-            k = 0
+                href = driver.find_elements_by_xpath('//*[@class="_93444fe79c--link--39cNw"]')[i].get_attribute('href')
+                db.addLink(href)
+                print(href)
+                print()
 
             try:
-                driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div[6]/div/ul/li[' + str(j) + ']/a')
+                driver.find_element_by_link_text(str(j))
             except NoSuchElementException:
                 flag = False
             else:
-                element_to_hover_over = driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div[6]/div/ul')
+                element_to_hover_over = driver.find_element_by_link_text(str(j))
                 hover = ActionChains(driver).move_to_element(element_to_hover_over)
                 hover.perform()
-                driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div[6]/div/ul/li[' + str(j) + ']/a').click()
-                if j < 11:
-                    j += 1
+                time.sleep(0.01)
+                driver.find_element_by_link_text(str(j)).click()
+                j += 1
                 time.sleep(2)
