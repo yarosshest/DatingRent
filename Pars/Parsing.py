@@ -23,60 +23,18 @@ chrome_options.add_argument("--headless")
 driver: WebDriver = webdriver.Chrome('D:\\chromedriver_win32\\chromedriver.exe')
 #driver = webdriver.Chrome()
 
-driver.get("https://www.cian.ru/rent/flat/236165105/")
+driver.get("https://www.cian.ru/rent/flat/193104791/")
 
 obshplo = driver.find_elements_by_xpath('//*[contains(@class,"a10a3f92e9--info-value")]')[0].text
 opisanie = driver.find_element_by_xpath('//*[@id="description"]/div[2]/div/div/span/p').text
-price = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[3]/div/div[1]/div[1]/div[1]/div/div[1]/div/span/span[1]').text
-
-try:
-    driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[1]')
-except NoSuchElementException:
-    town = ''
-else:
-    town = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[1]').text
-try:
-    driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[1]')
-except NoSuchElementException:
-    town = ''
-else:
-    town = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[1]').text
-
-try:
-    driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[2]')
-except NoSuchElementException:
-    okreg = ''
-else:
-    okreg = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[2]').text
-
-try:
-    driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[3]')
-except NoSuchElementException:
-    street = ''
-else:
-    street = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[3]').text
-
-try:
-    driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[4]')
-except NoSuchElementException:
-    street2 = ''
-else:
-    street2 = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[4]').text
-
-try:
-    driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[5]')
-except NoSuchElementException:
-    domnum = ''
-else:
-    domnum = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[5]').text
-
-adress = town + ' ' + okreg + ' ' + street + ' ' + street2 + ' ' + domnum
-
+price = driver.find_element_by_xpath('//*[contains(text(),"₽/мес")]').text
+#                                       //*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/span
+adress =  driver.find_element_by_xpath('//*[contains(text(),"Москва")]').text
 colcomn = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/h1').text
 
-
-metro = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/ul[1]/li[1]/a').text
-metrotime = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/ul[1]/li[1]/span').text
+#
+metro = driver.find_element_by_xpath('//*[contains(@class,"underground_link")]').text
+metrotime = driver.find_element_by_xpath('//*[contains(@class,"underground_time")]').text
 
 fotoochka =''
 print(obshplo)
@@ -108,7 +66,7 @@ print(items)
 colvo = driver.find_element_by_xpath('//*[@id="photos"]/div[2]/div/div[2]').text
 x = colvo.split()[0]
 try:
-    int(x)
+    x=int(x)
 except ValueError:
     colvo = driver.find_element_by_xpath('//*[@id="photos"]/div[2]/div[2]/div[2]').text
     x = int(colvo.split()[0])
