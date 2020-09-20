@@ -30,19 +30,22 @@ for site in db.getAllLinks():
             opisanie = driver.find_element_by_xpath('//*[@id="description"]/div[2]/div/div/span/p').text
             price = driver.find_element_by_xpath('//*[contains(text(),"₽/мес")]').text
             #                                       //*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/span
-            adress = driver.find_element_by_xpath('//*[contains(text(),"Москва")]').text
-            colcomn = driver.find_element_by_xpath(
-                '//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/h1').text
-
+            # <a data-name="Link" href="https://www.cian.ru/snyat-2-komnatnuyu-kvartiru/" class="a10a3f92e9--link--1t8n1 a10a3f92e9--address-item--1clHr">Москва</a>
+            adrcol = len(
+                driver.find_elements_by_xpath('//*[@class="a10a3f92e9--link--1t8n1 a10a3f92e9--address-item--1clHr"]'))
+            adress = ''
+            for i in range(adrcol - 1):
+                adress = adress + driver.find_elements_by_xpath(
+                    '//*[@class="a10a3f92e9--link--1t8n1 a10a3f92e9--address-item--1clHr"]')[i].text + ' '
+            colcomn = driver.find_element_by_xpath('//*[@data-name="OfferTitle"]').text
             #
             metro = driver.find_element_by_xpath('//*[contains(@class,"underground_link")]').text
             metrotime = driver.find_element_by_xpath('//*[contains(@class,"underground_time")]').text
 
             fotoochka = ''
             # print(obshplo)
-            # print(price, ' ', adress)
+            # print(price, ' ', adress, ' ', colcomn[0])
             # print(metro, ' ', metrotime)
-
 
             ucan = ''  # можно с детьми / животными
             try:
@@ -90,8 +93,10 @@ for site in db.getAllLinks():
                 #    print(fotoochka)
                 time.sleep(0.03)
 
+            undergrounds = metro + " " + metrotime
+
             room = EnterInSystem.Apartments()
-            room.undergrounds = metro + ' ' + metrotime
+            room.undergrounds = undergrounds
             room.address = adress
             room.discription = opisanie
             room.photo = fotoochka
@@ -103,8 +108,6 @@ for site in db.getAllLinks():
             room.ucan = ucan
 
             db.addRoom(room)
-
-            #db.addRoomList(price, adress, room.undergrounds, opisanie, fotoochka, colcomn, obshplo, site)
         # except:
         #     pass
         except OSError as err:
