@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, url_for, session
+from flask import Flask, request, redirect, url_for, session, render_template
 import os
 import jinja2
 import EnterInSystem
@@ -14,6 +14,7 @@ app.secret_key = '565009BA357CD1A05165F7E729DE7693'
 def render(template, **params):
     t = jinja_env.get_template(template)
     return t.render(params)
+
 
 # создание соединения с БД
 db = EnterInSystem.createBd()
@@ -50,6 +51,9 @@ def login():
         session['password'] = password
         session['Login'] = True
         session['userId'] = db.UserId(email)
+        # Костыль для удаления
+        session['scam'] = 0
+        # Костыль для удаления
         return redirect(url_for('Filtr'))
     if replay == "Wrong login password":
         return render('login.html', err="Неверный логин пароль")
@@ -61,14 +65,24 @@ def UserLab_GET():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
             # затычка пока нет алгоритма
-            price, address, undergrounds, discription, photo, room, area, id = db.RoomForId(1)
+            Ap = db.RoomForId(1)
+            session['roomID'] =1
+            price = Ap.price
+            undergrounds = Ap.undergrounds
+            discription = Ap.discription
+            photo = Ap.photo
+            room = Ap.room
+            area = Ap.area
+            address = Ap.address
+            price = Ap.price
+            ucan = Ap.ucan
+            items = Ap.items.split('/')
+            del items[len(items) - 1]
             l = photo.split()
             photo1 = l[0]
             del l[0]
-            session['roomID'] =id
-
-            return render('UserLab.html', price=price, address=address, undergrounds=undergrounds, discription=discription,
-                          photo1=photo1, photoAr=l, room=room, area=area)
+            return render_template('UserLab.html', price=price, address=address, undergrounds=undergrounds, discription=discription,
+                                   photo1=photo1, photoAr=l, room=room, area=area, items=items, ucan=ucan)
             # затычка пока нет алгоритма
         else:
             return render('login.html')
@@ -94,13 +108,25 @@ def UserLab():
             if "search" in request.form:  # поиск
                 # затычка пока нет алгоритма
                 db.Rate(session['userId'], session['roomID'], int(request.form['inlineRadioOptions']))
-                price, address, undergrounds, discription, photo, room, area, id = db.RoomForId(1)
+                Ap = db.RoomForId(1+session['scam'])
+                session['roomID'] = 1 + session['scam']
+                price = Ap.price
+                undergrounds = Ap.undergrounds
+                discription = Ap.discription
+                room = Ap.room
+                photo = Ap.photo
+                area = Ap.area
+                address = Ap.address
+                ucan = Ap.ucan.split('/')
+                del ucan[len(ucan) - 1]
+                items = Ap.items.split('/')
+                del items[len(items)-1]
                 l = photo.split()
                 photo1 = l[0]
                 del l[0]
-                return render('UserLab.html', price=price, address=address, undergrounds=undergrounds,
-                              discription=discription,
-                              photo1=photo1, photoAr=l, room=room, area=area)
+                session['scam'] =session['scam']+1
+                return render_template('UserLab.html', price=price, address=address, undergrounds=undergrounds,
+                              discription=discription, photo1=photo1, photoAr=l, room=room, area=area, items=items, ucan=ucan)
                 # затычка пока нет алгоритма
         else:
             return render('login.html')
@@ -164,3 +190,7 @@ def registr():
 @app.route('/', methods=['GET', 'POST'])
 def home():
     return redirect(url_for('login'))
+
+def render(template, **params):
+    t = jinja_env.get_template(template)
+    return t.render(params)

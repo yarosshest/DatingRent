@@ -12,8 +12,9 @@ from sqlalchemy import func
 
 
 # расположение БД
-engine = create_engine('sqlite:///some.db', echo=False)
+engine = create_engine('sqlite:///links.db', echo=False)
 Base = declarative_base()
+meta = MetaData()
 
 
 # Таблица пользователей
@@ -54,16 +55,8 @@ class Apartments(Base):
     room = Column(String)
     area = Column(String)
     link = Column(String)
-
-    def __init__(self, price, address, undergrounds, discription, photo, room, area, link):
-        self.price = price
-        self.address = address
-        self.undergrounds = undergrounds
-        self.discription = discription
-        self.photo = photo
-        self.room = room
-        self.area = area
-        self.link = link
+    items = Column(String)
+    ucan = Column(String)
 
 
 # Таблица ссылок
@@ -112,10 +105,10 @@ class DatabaseFuction(object):
     # Квартира по id
     def RoomForId(self, id):
         session = self.Session()
-        ab = session.query(Apartments).first()
-        l = [ab.price, ab.address, ab.undergrounds, ab.discription, ab.photo, ab.room, ab.area, ab.id]
+        ab = Apartments()
+        ab = session.query(Apartments).filter(Apartments.id == id).first()
         session.close()
-        return l
+        return ab
 
     # Оценка квартиры
     def Rate(self, idU, idA, rateScore):
@@ -135,11 +128,17 @@ class DatabaseFuction(object):
         return id
 
     # добавление квартиры
-    def addRoom(self, price, address, undergrounds, discription, photo, room, area, link):
+    def addRoomList(self, price, address, undergrounds, discription, photo, room, area, link):
         session = self.Session()
         NewRoom = Apartments(price, address, undergrounds, discription, photo, room, area, link)
 
         session.add(NewRoom)
+        session.commit()
+        session.close()
+
+    def addRoom(self, room):
+        session = self.Session()
+        session.add(room)
         session.commit()
         session.close()
 
@@ -178,12 +177,14 @@ class DatabaseFuction(object):
     def RoomChek(self,link):
         session = self.Session()
         r = session.query(Apartments).filter(Apartments.link == link)
-        if r.count() >= 1:
+        A = r.count()
+        if A >= 1:
             session.close()
             return False
         else:
             session.close()
             return True
+
 
 # Вход в сиситему пользователя
 def LoginUser(DBase, login, password):
