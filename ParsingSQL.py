@@ -91,7 +91,7 @@ for site in db.getAllLinks():
                 driver.find_element_by_xpath('//div[@class="fotorama__arr fotorama__arr--next"]').click()
                 fotoochka = fotoochka + url + ' '
                 #    print(fotoochka)
-                time.sleep(0.03)
+                time.sleep(0.2)
 
             undergrounds = metro + " " + metrotime
 
