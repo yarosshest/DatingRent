@@ -5,7 +5,7 @@ from selenium.webdriver import chrome
 from selenium.webdriver.android.webdriver import WebDriver
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
-from selenium import webdriver
+from selenium import webdriver                                    #библиотечки
 import urllib
 import time
 from selenium.webdriver.common.action_chains import ActionChains
@@ -13,80 +13,78 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 
 import EnterInSystem
 
-db = EnterInSystem.createBd()
+#db = EnterInSystem.createBd()
+                                         #эскьюэлька
+#for site in db.getAllLinks():
 
-for site in db.getAllLinks():
+chrome_options = Options()
+chrome_options.add_argument("--headless")            #привязка к хрому
 
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
+driver: WebDriver = webdriver.Chrome('D:\\chromedriver_win32\\chromedriver.exe')    #еще ода библиотечка, но специфичная, в анаконде такой нет
+#driver = webdriver.Chrome()
 
-    driver: WebDriver = webdriver.Chrome('D:\\chromedriver_win32\\chromedriver.exe')
-    #driver = webdriver.Chrome()
+driver.get("https://www.cian.ru/rent/flat/241144648/") #переходим на страницу
 
-    driver.get(site)
+obshplo = driver.find_elements_by_xpath('//*[contains(@class,"a10a3f92e9--info-value")]')[0].text #общая площадь квартиры
+opisanie = driver.find_element_by_xpath('//*[@id="description"]/div[2]/div/div/span/p').text #описание квартиры
+price = driver.find_element_by_xpath('//*[contains(text(),"₽/мес")]').text #цена
 
-    obshplo = driver.find_element_by_xpath('//*[@id="description"]/div[1]/div[2]/div[1]/div[1]').text
-    jilplo = driver.find_element_by_xpath('//*[@id="description"]/div[1]/div[2]/div[2]/div[1]').text
-    kitchen = driver.find_element_by_xpath('//*[@id="description"]/div[1]/div[2]/div[3]/div[1]').text
-    level = driver.find_element_by_xpath('//*[@id="description"]/div[1]/div[2]/div[4]/div[1]').text
-    datsroi = driver.find_element_by_xpath('//*[@id="description"]/div[1]/div[2]/div[5]/div[1]').text
-    opisanie = driver.find_element_by_xpath('//*[@id="description"]/div[2]/div/div/span/p').text
-    price = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[3]/div/div[1]/div[1]/div[1]/div/div[1]/div/span/span[1]').text
+adrcol = len(driver.find_elements_by_xpath('//*[@class="a10a3f92e9--link--1t8n1 a10a3f92e9--address-item--1clHr"]')) #количество элементов адреса
+adress = '' #инициализация
+for i in range(adrcol-1):
+    adress =  adress+ driver.find_elements_by_xpath('//*[@class="a10a3f92e9--link--1t8n1 a10a3f92e9--address-item--1clHr"]')[i].text+' ' # сборка адресо в целостный вид
+colcomn = driver.find_element_by_xpath('//*[@data-name="OfferTitle"]').text #кол-во комнат
+#
+metro = driver.find_element_by_xpath('//*[contains(@class,"underground_link")]').text #метро
+metrotime = driver.find_element_by_xpath('//*[contains(@class,"underground_time")]').text #время до метра
 
-    town = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[1]').text
-    okreg = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[2]').text
-    street = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[3]').text
-    street2 = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[4]').text
-    domnum = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/address/a[5]').text
-    adress = town + ' ' + okreg + ' ' + street + ' ' + street2 + ' ' + domnum
+fotoochka ='' #инициализация
+print(obshplo)
+print(price, ' ', adress, ' ', colcomn[0])
+print(metro, ' ', metrotime)
 
-    colcomn = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/h1').text
+ucan = '' #можно с детьми / животными
+try:
+    element_to_hover_over = driver.find_element_by_xpath('//*[@data-name="Tenants"]')  #проверка на вшивость
+except NoSuchElementException:
+    ucan = '' #нет такого на странице
+else:
+    coll = len(driver.find_elements_by_xpath('//*[contains(@class,"a10a3f92e9--item--21VpQ a10a3f92e9")]'))  #кол-во эл
+    for i in range(coll):
+        ucan = ucan + driver.find_elements_by_xpath('//*[contains(@class,"a10a3f92e9--item--21VpQ a10a3f92e9")]')[i-1].text+'/'  #сборка эл
+print(ucan)
+
+items = '' #итемы квартиры
+try:
+    element_to_hover_over = driver.find_element_by_xpath('//*[@data-name="Features"]') #проверка на вшивоть
+except NoSuchElementException:
+    items = '' #нет такого на странице
+else:
+    coll = len(driver.find_elements_by_xpath('//*[@data-name="FeatureItem"]')) #кол-во эл
+    for i in range(coll-1):
+        items = items + driver.find_elements_by_xpath('//*[@data-name="FeatureItem"]')[i].text+'/' #сборка эл
+print(items)
+
+colvo = driver.find_element_by_xpath('//*[@id="photos"]/div[2]/div/div[2]').text #кол-во фоточек
+x = colvo.split()[0] #вычленяем из этого инт
+try:
+    x=int(x) #проверка на вшивоть
+except ValueError:
+    colvo = driver.find_element_by_xpath('//*[@id="photos"]/div[2]/div[2]/div[2]').text #тогда фоточки - другой элемент
+    x = int(colvo.split()[0]) #теперь это инт
 
 
-    metro = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/ul[1]/li[1]/a').text
-    metrotime = driver.find_element_by_xpath('//*[@id="frontend-offer-card"]/main/div[2]/div[1]/section/div/div[1]/div[2]/ul[1]/li[1]/span').text
+for i in range(x):
+    url = driver.find_element_by_xpath("//div[contains(@class, 'fotorama__active')]/img").get_attribute('src') #тырим ссылки фоточек
 
-    colvo = driver.find_element_by_xpath('//*[@id="photos"]/div[2]/div/div[2]').text
-    x = int(colvo.split()[0])
+    element_to_hover_over = driver.find_element_by_xpath('//*[@id="frontend-offer-card-fotorama"]/div/div[1]/div[1]') #видим элементы
+    hover = ActionChains(driver).move_to_element(element_to_hover_over) #наводимся на фоточку
+    hover.perform() #наводимся снова
 
-    fotoochka =''
-    print(obshplo, ' ', jilplo, ' ', kitchen, ' ', level, ' ', datsroi)
-    print(price, ' ', adress)
-    print(metro, ' ', metrotime)
+    driver.find_element_by_xpath('//div[@class="fotorama__arr fotorama__arr--next"]').click() #видим кнопку переключения на след кнопку
+    fotoochka = fotoochka + url+ ' ' #все будет нашим
+#    print(fotoochka)
+    time.sleep(0.03) #прогрузиться, потом и поговорим
 
-    ucan = '' #можно с детьми / животными
-    try:
-        element_to_hover_over = driver.find_element_by_xpath('//*[@data-name="Tenants"]')
-    except NoSuchElementException:
-        ucan = ''
-    else:
-        coll = len(driver.find_elements_by_xpath('//*[contains(@class,"a10a3f92e9--item--21VpQ a10a3f92e9")]'))
-        for i in range(coll):
-            ucan = ucan + driver.find_elements_by_xpath('//*[contains(@class,"a10a3f92e9--item--21VpQ a10a3f92e9")]')[i-1].text+'/'
-    print(ucan)
-
-    items = '' #итемы квартиры
-    try:
-        element_to_hover_over = driver.find_element_by_xpath('//*[@data-name="Features"]')
-    except NoSuchElementException:
-        items = ''
-    else:
-        coll = len(driver.find_elements_by_xpath('//*[@data-name="FeatureItem"]'))
-        for i in range(coll-1):
-            items = items + driver.find_elements_by_xpath('//*[@data-name="FeatureItem"]')[i].text+'/'
-    print(items)
-
-    for i in range(x):
-        url = driver.find_element_by_xpath("//div[contains(@class, 'fotorama__active')]/img").get_attribute('src')
-
-        element_to_hover_over = driver.find_element_by_xpath('//*[@id="frontend-offer-card-fotorama"]/div/div[1]/div[1]')
-        hover = ActionChains(driver).move_to_element(element_to_hover_over)
-        hover.perform()
-
-        driver.find_element_by_xpath('//div[@class="fotorama__arr fotorama__arr--next"]').click()
-        fotoochka = fotoochka + url+ ' '
-    #    print(fotoochka)
-        time.sleep(0.05)
-
-    undergrounds = metro + " " +metrotime
-    EnterInSystem.createRoom(db, price, adress, undergrounds, opisanie, fotoochka, colcomn, obshplo, site)
+undergrounds = metro + " " +metrotime
+#EnterInSystem.createRoom(db, price, adress, undergrounds, opisanie, fotoochka, colcomn, obshplo, site)
