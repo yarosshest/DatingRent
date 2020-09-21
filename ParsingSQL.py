@@ -45,9 +45,9 @@ for site in db.getAllLinks():
             metrotime = driver.find_element_by_xpath('//*[contains(@class,"underground_time")]').text  # время до метра
 
             fotoochka = ''  # инициализация
-            print(obshplo)
-            print(price, ' ', adress, ' ', colcomn[0])
-            print(metro, ' ', metrotime)
+            # print(obshplo)
+            # print(price, ' ', adress, ' ', colcomn[0])
+            # print(metro, ' ', metrotime)
 
             ucan = ''  # можно с детьми / животными
             try:
@@ -62,7 +62,7 @@ for site in db.getAllLinks():
                     ucan = ucan + \
                            driver.find_elements_by_xpath('//*[contains(@class,"a10a3f92e9--item--21VpQ a10a3f92e9")]')[
                                i - 1].text + '/'  # сборка эл
-            print(ucan)
+            # print(ucan)
 
             items = ''  # итемы квартиры
             try:
@@ -75,7 +75,7 @@ for site in db.getAllLinks():
                 for i in range(coll - 1):
                     items = items + driver.find_elements_by_xpath('//*[@data-name="FeatureItem"]')[
                         i].text + '/'  # сборка эл
-            print(items)
+            # print(items)
 
             colvo = driver.find_element_by_xpath('//*[@id="photos"]/div[2]/div/div[2]').text  # кол-во фоточек
             x = colvo.split()[0]  # вычленяем из этого инт
@@ -98,8 +98,8 @@ for site in db.getAllLinks():
                 driver.find_element_by_xpath(
                     '//div[@class="fotorama__arr fotorama__arr--next"]').click()  # видим кнопку переключения на след кнопку
                 fotoochka = fotoochka + url + ' '  # все будет нашим
-                #    print(fotoochka)
-                time.sleep(0.03)  # прогрузиться, потом и поговорим
+                # print(fotoochka)
+                time.sleep(0.1)  # прогрузиться, потом и поговорим
 
             undergrounds = metro + " " + metrotime
 
@@ -116,7 +116,7 @@ for site in db.getAllLinks():
             room.ucan = ucan
 
             db.addRoom(room)
-        # except:
-        #     pass
-        except OSError as err:
-            print("OS error: {0}".format(err))
+        except:
+            pass
+        # except OSError as err:
+        #     print(err)
