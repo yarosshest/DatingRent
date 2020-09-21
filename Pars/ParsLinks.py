@@ -37,27 +37,20 @@ while True:
             costil=6
         i = 0
         for i in range(27):
-            try:
-                element_to_hover_over = driver.find_elements_by_xpath('//*[@data-name="TopOfferCard"]')[i]
-            except:
-                break
-            else:
-                element_to_hover_over = driver.find_elements_by_xpath('//*[@data-name="TopOfferCard"]')[i]
-                hover = ActionChains(driver).move_to_element(element_to_hover_over)
-                hover.perform()
+            element_to_hover_over = driver.find_elements_by_xpath('//*[@data-name="TopOfferCard"]')[i]
+            hover = ActionChains(driver).move_to_element(element_to_hover_over)
+            hover.perform()
 
-            time.sleep(0.1)
+            time.sleep(0.05)
             href = driver.find_elements_by_xpath('//*[@class="c6e8ba5398--header--1fV2A"]')[i].get_attribute('href')
-            if db.linkChek(href):
-                db.addLink(href)
-            #print(href)
-            #print()
+            db.addLink(href)
+            print(href)
+            print()
 
-        element_to_hover_over = driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div[' + str(costil) + ']/div/ul')
+        element_to_hover_over = driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div['+str(costil)+']/div/ul')
         hover = ActionChains(driver).move_to_element(element_to_hover_over)
         hover.perform()
-        driver.find_element_by_xpath(
-            '//*[@id="frontend-serp"]/div/div[' + str(costil) + ']/div/ul/li[' + str(j) + ']/a').click()
+        driver.find_element_by_xpath('//*[@id="frontend-serp"]/div/div['+str(costil)+']/div/ul/li[' + str(j) + ']/a').click()
         if j < 11:
             j += 1
         time.sleep(2)
