@@ -108,10 +108,17 @@ for site in db.getAllLinks():
             room.address = adress
             room.discription = opisanie
             room.photo = fotoochka
-            room.room = colcomn
+
+            colcomn = colcomn.split()
+            colcomn[1] = colcomn[1][:len(colcomn[1])-1]
+            room.room = colcomn[0] + colcomn[1]
+
             room.link = site
+
+            price = price[:price.find("₽/мес.")]
             room.price = price
-            room.area = obshplo
+
+            room.area = obshplo.split()[0]
             room.items = items
             room.ucan = ucan
 
@@ -119,4 +126,4 @@ for site in db.getAllLinks():
         except:
             pass
         # except OSError as err:
-        #     print(err)
+        #      print(err)

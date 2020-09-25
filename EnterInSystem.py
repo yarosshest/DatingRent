@@ -127,6 +127,17 @@ class DatabaseFuction(object):
         session.close()
         return id
 
+    # def dbUpd(self):
+    #     session = self.Session()
+    #     for instance in session.query(Apartments):
+    #         room = instance.room
+    #         room = room[:len(room)-1]
+    #         instance.room = room
+    #         session.commit()
+    #
+    #     session.close()
+
+
     # добавление квартиры
     def addRoomList(self, price, address, undergrounds, discription, photo, room, area, link):
         session = self.Session()
@@ -158,6 +169,16 @@ class DatabaseFuction(object):
         l =[]
         for instance in session.query(Links.link):
             l.append(instance.link)
+
+        session.close()
+        return l
+
+    # Получение всех пользователей
+    def getAllRate(self):
+        session = self.Session()
+        l = []
+        for instance in session.query(Rates):
+            l.append(instance)
 
         session.close()
         return l
@@ -206,3 +227,6 @@ def RegisterUser(DBase, login, password):
 def createBd():
     Base.metadata.create_all(engine)
     return DatabaseFuction()
+
+# db = createBd()
+# db.dbUpd()
