@@ -27,7 +27,7 @@ driver.get("https://www.cian.ru/rent/flat/241144648/") #переходим на 
 
 obshplo = driver.find_elements_by_xpath('//*[contains(@class,"a10a3f92e9--info-value")]')[0].text #общая площадь квартиры
 opisanie = driver.find_element_by_xpath('//*[@id="description"]/div[2]/div/div/span/p').text #описание квартиры
-price = driver.find_element_by_xpath('//*[contains(text(),"₽/мес")]').text #цена
+price = driver.find_element_by_xpath('//span[contains(text(),"₽/мес")]').text #цена
 
 adrcol = len(driver.find_elements_by_xpath('//*[@class="a10a3f92e9--link--1t8n1 a10a3f92e9--address-item--1clHr"]')) #количество элементов адреса
 adress = '' #инициализация
