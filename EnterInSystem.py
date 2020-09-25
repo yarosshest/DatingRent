@@ -5,13 +5,19 @@ from sqlalchemy import create_engine, DateTime, func
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship, backref
+from sqlalchemy.orm import sessionmaker, relationship, backref, Query
+from sqlalchemy.sql import select
 from sqlalchemy.dialects.sqlite import DATETIME
+from sqlalchemy import func
 
+
+# расположение БД
 engine = create_engine('sqlite:///links.db', echo=False)
 Base = declarative_base()
+meta = MetaData()
 
 
+# Таблица пользователей
 class Users(Base):
     __tablename__ = 'Users'
     id = Column(Integer, primary_key=True)
@@ -23,22 +29,7 @@ class Users(Base):
         self.Password = Password
 
 
-class Sessions(Base):
-    __tablename__ = 'Sessions'
-    id = Column(Integer, primary_key=True)
-    start_time = Column(DateTime)
-    finish_time = Column(DateTime)
-    Users_id = Column(Integer, ForeignKey('Users.id'))
-    Users = relationship(
-        Users,
-        backref=backref('Sessions',
-                        uselist=True,
-                        cascade='delete,all'))
-
-    def __repr__(self):
-        return "%s to %s" % (self.start_time, self.finish_time)
-
-
+# Таблица рейтингов
 class Rates(Base):
     __tablename__ = 'Rates'
     id = Column(Integer, primary_key=True)
@@ -52,10 +43,11 @@ class Rates(Base):
         self.rate = rate
 
 
+# Таблица апартаментов
 class Apartments(Base):
     __tablename__ = 'Apartments'
     id = Column(Integer, primary_key=True)
-    price = Column(Integer)
+    price = Column(String)
     address = Column(String)
     undergrounds = Column(String)
     discription = Column(String)
@@ -63,17 +55,11 @@ class Apartments(Base):
     room = Column(String)
     area = Column(String)
     link = Column(String)
+    items = Column(String)
+    ucan = Column(String)
 
-    def __init__(self, price, address, undergrounds, discription, photo, room, area, link):
-        self.price = price
-        self.address = address
-        self.undergrounds = undergrounds
-        self.discription = discription
-        self.photo = photo
-        self.room = room
-        self.area = area
-        self.link = link
 
+# Таблица ссылок
 class Links(Base):
     __tablename__ = 'Links'
     id = Column(Integer, primary_key=True)
@@ -83,52 +69,27 @@ class Links(Base):
         self.link = link
 
 
-
+# Логика работы с БД
 class DatabaseFuction(object):
     def __init__(self):
         self.Session = sessionmaker(bind=engine)
 
-    def Insert(self, Log, Pass):
-        NewUser = Users(Log, Pass)
-        session = self.Session()
-        session.add(NewUser)
-        session.commit()
-        session.close()
-
-    def Drop(self):
-        session = self.Session()
-        session.query.delete()
-        session.close()
-
-    def LogOut(self, Log):
-        session = self.Session()
-        for instance in session.query(Sessions.start_time, Sessions.finish_time, Sessions.id):
-            if (None == instance.finish_time):
-                SesionUser = session.query(Sessions).filter_by(id=instance.id).first()
-                SesionUser.finish_time = datetime.now()
-                session.add(SesionUser)
-                session.commit()
-        session.close()
-
+    # Вход в сиситему пользователя
     def Login(self, Log, Pass):
         Exist = False
-        data = datetime.now()
         session = self.Session()
         for instance in session.query(Users.Login, Users.Password, Users.id):
-            if ((instance.Login == Log) and (instance.Password == Pass)):
-                SesionUser = Sessions(start_time=datetime.now(), finish_time=None,
-                                      Users=session.query(Users).filter_by(id=instance.id).first())
-                session.add(SesionUser)
-                session.commit()
+            if (instance.Login == Log) and (instance.Password == Pass):
                 Exist = True
         session.close()
         return Exist
 
+    # Регистрация ползователя
     def Register(self, Log, Pass):
         session = self.Session()
         Exist = False
         for instance in session.query(Users.Login):
-            if (instance.Login == Log):
+            if instance.Login == Log:
                 Exist = True
 
         if Exist:
@@ -140,15 +101,16 @@ class DatabaseFuction(object):
             session.commit()
             session.close()
             return True
-        session.close()
 
+    # Квартира по id
     def RoomForId(self, id):
         session = self.Session()
-        ab = session.query(Apartments).filter_by(id=id).first()
-        l = [ab.price, ab.address, ab.undergrounds, ab.discription, ab.photo, ab.room, ab.area, ab.id]
+        ab = Apartments()
+        ab = session.query(Apartments).filter(Apartments.id == id).first()
         session.close()
-        return l
+        return ab
 
+    # Оценка квартиры
     def Rate(self, idU, idA, rateScore):
         session = self.Session()
         rate = Rates(idU, idA, rateScore)
@@ -156,6 +118,7 @@ class DatabaseFuction(object):
         session.commit()
         session.close()
 
+    # Получение id пользователя
     def UserId(self, Log):
         session = self.Session()
         for instance in session.query(Users.Login, Users.Password, Users.id):
@@ -164,16 +127,33 @@ class DatabaseFuction(object):
         session.close()
         return id
 
-    def addRoom(self, price, address, undergrounds, discription, photo, room, area, link):
-        session = self.Session()
+    # def dbUpd(self):
+    #     session = self.Session()
+    #     for instance in session.query(Apartments):
+    #         room = instance.room
+    #         room = room[:len(room)-1]
+    #         instance.room = room
+    #         session.commit()
+    #
+    #     session.close()
 
+
+    # добавление квартиры
+    def addRoomList(self, price, address, undergrounds, discription, photo, room, area, link):
+        session = self.Session()
         NewRoom = Apartments(price, address, undergrounds, discription, photo, room, area, link)
 
         session.add(NewRoom)
         session.commit()
         session.close()
 
+    def addRoom(self, room):
+        session = self.Session()
+        session.add(room)
+        session.commit()
+        session.close()
 
+    # Добавление ссылки в таблицу
     def addLink(self, link):
         session = self.Session()
 
@@ -183,6 +163,7 @@ class DatabaseFuction(object):
         session.commit()
         session.close()
 
+    # Получение всех ссылок
     def getAllLinks(self):
         session = self.Session()
         l =[]
@@ -192,17 +173,41 @@ class DatabaseFuction(object):
         session.close()
         return l
 
+    # Получение всех пользователей
+    def getAllRate(self):
+        session = self.Session()
+        l = []
+        for instance in session.query(Rates):
+            l.append(instance)
+
+        session.close()
+        return l
+
+    # Проверка дублирования ссылки
+    def linkChek(self,link):
+        session = self.Session()
+        r = session.query(Links).filter(Links.link == link)
+        if r.count() >= 1:
+            session.close()
+            return False
+        else:
+            session.close()
+            return True
+
+    # Проверка дублирования квартиры
+    def RoomChek(self,link):
+        session = self.Session()
+        r = session.query(Apartments).filter(Apartments.link == link)
+        A = r.count()
+        if A >= 1:
+            session.close()
+            return False
+        else:
+            session.close()
+            return True
 
 
-def LogOutUser(DBase, login):
-    DBase.LogOut(login)
-    return True
-
-
-def getUserId(DBase, login):
-    return DBase.UserId(login)
-
-
+# Вход в сиситему пользователя
 def LoginUser(DBase, login, password):
     result = DBase.Login(login, password)
     if result:
@@ -210,7 +215,7 @@ def LoginUser(DBase, login, password):
     else:
         return "Wrong login password"
 
-
+# Регистрация ползователя
 def RegisterUser(DBase, login, password):
     result = DBase.Register(login, password)
     if result:
@@ -218,29 +223,10 @@ def RegisterUser(DBase, login, password):
     else:
         return "User already exists"
 
-
-def GetRoomForId(DBase, id):
-    return DBase.RoomForId(id)
-
-
-def FullDB(DBase, login, password):
-    DBase.Insert(login, password)
-
-
-def createRoom(DBase, price, address, undergrounds, discription, photo, room, area, link):
-    DBase.addRoom(price, address, undergrounds, discription, photo, room, area, link)
-
-
+# Создание обьекта для работы с БД
 def createBd():
     Base.metadata.create_all(engine)
-    DBase = DatabaseFuction()
-    return DBase
+    return DatabaseFuction()
 
-
-def rateRoom(DBase, idU, idA, rate):
-    DBase.Rate(idU, idA, rate)
-
-
-def DropTable():
-    Users.__table__.drop(engine)
-    Sessions.__table__.drop(engine)
+# db = createBd()
+# db.dbUpd()
