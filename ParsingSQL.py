@@ -11,7 +11,7 @@ import time
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.webdriver import WebDriver
 import EnterInSystem
-
+from srvn import preprocess_text
 db = EnterInSystem.createBd()
 
 chrome_options = Options()
@@ -30,7 +30,7 @@ for site in db.getAllLinks():
                 0].text  # общая площадь квартиры
             opisanie = driver.find_element_by_xpath(
                 '//*[@id="description"]/div[2]/div/div/span/p').text  # описание квартиры
-            price = driver.find_element_by_xpath('//*[contains(text(),"₽/мес")]').text  # цена
+            price = driver.find_element_by_xpath('//span[contains(text(),"₽/мес")]').text #цена
 
             adrcol = len(driver.find_elements_by_xpath(
                 '//*[@class="a10a3f92e9--link--1t8n1 a10a3f92e9--address-item--1clHr"]'))  # количество элементов адреса
@@ -104,6 +104,33 @@ for site in db.getAllLinks():
             undergrounds = metro + " " + metrotime
 
             room = EnterInSystem.Apartments()
+
+            if "Мебель в комнатах" in items:
+                room.furnitRoom = True
+            if "Мебель на кухне" in items:
+                room.furnitKitch = True
+            if "Холодильник" in items:
+                room.fridge = True
+            if "Посудомоечная машина" in items:
+                room.dishwasher = True
+            if "Стиральная машина" in items:
+                room.washer = True
+            if "Интернет" in items:
+                room.internet = True
+            if "Телефон" in items:
+                room.phone = True
+            if "Кондиционер" in items:
+                room.conditioner = True
+            if "Ванна" in items:
+                room.bath = True
+            if "Душевая кабина" in items:
+                room.shower = True
+
+            if "Можно с детьми" in ucan:
+                room.children = True
+            if "Можно с животными" in ucan:
+                room.animals = True
+
             room.undergrounds = undergrounds
             room.address = adress
             room.discription = opisanie
@@ -116,12 +143,17 @@ for site in db.getAllLinks():
             room.link = site
 
             price = price[:price.find("₽/мес.")]
-            room.price = price
+            price = price.split()
+            pri = ''
+            for i in price:
+                pri = pri + i
+            room.price = int(pri)
 
-            room.area = obshplo.split()[0]
+            room.area = float(obshplo.split()[0])
             room.items = items
             room.ucan = ucan
-
+            room.tegs = room.items + room.ucan + room.discription
+            room.tegLem = preprocess_text(room.tegs)
             db.addRoom(room)
         except:
             pass

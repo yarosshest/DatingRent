@@ -65,6 +65,7 @@ def UserLab_GET():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
             # затычка пока нет алгоритма
+
             Ap = db.RoomForId(1)
             session['roomID'] =1
             price = Ap.price
@@ -76,6 +77,7 @@ def UserLab_GET():
             address = Ap.address
             price = Ap.price
             ucan = Ap.ucan
+
             items = Ap.items.split('/')
             del items[len(items) - 1]
             l = photo.split()
@@ -105,11 +107,11 @@ def UserLab():
             if 'filter' in request.form:  # изминение фильтра
                 return redirect(url_for('Filtr'))
 
-            if "search" in request.form:  # поиск
+            if "rate" in request.form:  # поиск
                 # затычка пока нет алгоритма
-                db.Rate(session['userId'], session['roomID'], int(request.form['inlineRadioOptions']))
-                Ap = db.RoomForId(1+session['scam'])
-                session['roomID'] = 1 + session['scam']
+
+                db.Rate(session['userId'], session['roomID'], bool(int(request.form['rate'])))
+                Ap = EnterInSystem.getRec(db, session["MaxAmount"], session["Metro"], session['userId'])
                 price = Ap.price
                 undergrounds = Ap.undergrounds
                 discription = Ap.discription
@@ -124,7 +126,6 @@ def UserLab():
                 l = photo.split()
                 photo1 = l[0]
                 del l[0]
-                session['scam'] =session['scam']+1
                 return render_template('UserLab.html', price=price, address=address, undergrounds=undergrounds,
                               discription=discription, photo1=photo1, photoAr=l, room=room, area=area, items=items, ucan=ucan)
                 # затычка пока нет алгоритма
@@ -154,8 +155,6 @@ def Filtr():
             # получение фильтров
             if 'MaxAmount' in request.form:
                 session['MaxAmount'] = request.form['MaxAmount']
-            if 'KolRoom' in request.form:
-                session['KolRoom'] = request.form['KolRoom']
             if 'Metro' in request.form:
                 session['Metro'] = request.form['Metro']
             return redirect(url_for('UserLab'))

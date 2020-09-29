@@ -1,7 +1,7 @@
 import datetime
 from datetime import datetime
 import sqlalchemy
-from sqlalchemy import create_engine, DateTime, func
+from sqlalchemy import create_engine, DateTime, func, Boolean, Float
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
@@ -9,7 +9,8 @@ from sqlalchemy.orm import sessionmaker, relationship, backref, Query
 from sqlalchemy.sql import select
 from sqlalchemy.dialects.sqlite import DATETIME
 from sqlalchemy import func
-
+# from srvn import preprocess_text
+import srvn
 
 # расположение БД
 engine = create_engine('sqlite:///links.db', echo=False)
@@ -35,7 +36,7 @@ class Rates(Base):
     id = Column(Integer, primary_key=True)
     Users_id = Column(Integer, ForeignKey('Users.id'))
     Apartments_id = Column(Integer, ForeignKey('Apartments.id'))
-    rate = Column(Integer)
+    rate = Column(Boolean)
 
     def __init__(self, idU, idA, rate):
         self.Users_id = idU
@@ -47,16 +48,30 @@ class Rates(Base):
 class Apartments(Base):
     __tablename__ = 'Apartments'
     id = Column(Integer, primary_key=True)
-    price = Column(String)
+    price = Column(Integer)
     address = Column(String)
     undergrounds = Column(String)
     discription = Column(String)
     photo = Column(String)
     room = Column(String)
-    area = Column(String)
+    area = Column(Float)
     link = Column(String)
+    furnitRoom = Column(Boolean, default=False)
+    furnitKitch = Column(Boolean, default=False)
+    fridge = Column(Boolean, default=False)
+    dishwasher = Column(Boolean, default=False)
+    washer = Column(Boolean, default=False)
+    children = Column(Boolean, default=False)
+    animals = Column(Boolean, default=False)
+    internet = Column(Boolean, default=False)
+    phone = Column(Boolean, default=False)
+    conditioner = Column(Boolean, default=False)
+    bath = Column(Boolean, default=False)
+    shower = Column(Boolean, default=False)
     items = Column(String)
     ucan = Column(String)
+    tegs = Column(String)
+    tegLem = Column(String)
 
 
 # Таблица ссылок
@@ -127,15 +142,12 @@ class DatabaseFuction(object):
         session.close()
         return id
 
-    # def dbUpd(self):
-    #     session = self.Session()
-    #     for instance in session.query(Apartments):
-    #         room = instance.room
-    #         room = room[:len(room)-1]
-    #         instance.room = room
-    #         session.commit()
-    #
-    #     session.close()
+    def dbUpd(self):
+        session = self.Session()
+        for instance in session.query(Apartments):
+            instance.tegs = instance.items + instance.ucan + instance.discription
+            session.commit()
+        session.close()
 
 
     # добавление квартиры
@@ -206,6 +218,58 @@ class DatabaseFuction(object):
             session.close()
             return True
 
+    def allNotRate(self, pice, metro, userId):
+        session = self.Session()
+        response = []
+        list = session.query(Apartments).filter(Apartments.price <= pice,Apartments.undergrounds.ilike("%"+metro+"%")).all()
+        rate = []
+        rated = session.query(Rates.Apartments_id).filter(Rates.Users_id == userId, Rates.rate == 1).all()
+        for ap in rated:
+            rate.append(ap[0])
+        for ap in list:
+            if ap.id in rate:
+                pass
+            else:
+                response.append(ap.tegLem)
+        session.close()
+        return response
+
+    def allRate(self, userId):
+        session = self.Session()
+        response = []
+        list = session.query(Apartments).all()
+        rate = []
+        rated = session.query(Rates.Apartments_id).filter(Rates.Users_id == userId, Rates.rate == 1).all()
+        for ap in rated:
+            rate.append(ap[0])
+        for ap in list:
+            if ap.id in rate:
+                response.append(ap.tegLem)
+        session.close()
+        return response
+
+    def getForTegs(self, tegs):
+        session = self.Session()
+        list = session.query(Apartments).filter(Apartments.tegLem == tegs)
+        responce = list.first()
+        session.commit()
+        return responce
+
+
+    # def lemon(self):
+    #     session = self.Session()
+    #     list = session.query(Apartments).all()
+    #     col = 0
+    #     for ap in list:
+    #         if ap.tegs != '':
+    #             ap.tegLem = preprocess_text(ap.tegs)
+    #             session.commit()
+    #         col = col +1
+    #         print(col)
+    #     session.close()
+
+def getRec(DBase, pice, metro, userId):
+    return DBase.getForTegs(srvn.getRoom(pice, metro, userId))
 
 # Вход в сиситему пользователя
 def LoginUser(DBase, login, password):
@@ -229,4 +293,4 @@ def createBd():
     return DatabaseFuction()
 
 # db = createBd()
-# db.dbUpd()
+# db.lemon()
