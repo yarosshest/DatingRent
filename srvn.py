@@ -61,22 +61,23 @@ def getRoom(pice, metro, userId):
     db = EnterInSystem.createBd()
 
     listScam = []
-    #Construct the required TF-IDF matrix by applying the fit_transform method on the overview feature
-    col = 0
-    for i in db.allNotRate(pice,metro,userId):
-        listScam.append(i)  # трансформация в кучу векторов эл питонячьего списка
-
-    overview_matrix = tfidf.fit_transform(np.array(listScam))  # трансформация в кучу векторов эл питонячьего списка
-
-    similarity_matrix = linear_kernel(overview_matrix,overview_matrix) #МАтрица сходства
-    listScam = []
     for i in db.allRate(userId):
-        listScam.append(i)
+        listScam.append(i.data)
 
-    overview_matrix_polz = tfidf.fit_transform(np.array(listScam)) #вектора квартир, положительно оцененных пользователем
-    vectorpolz = []
-    for i in overview_matrix_polz:
-        vectorpolz.append(np.mean(i))
+    # overview_matrix_polz = tfidf.fit_transform(np.array(listScam))  # вектора квартир, положительно оцененных пользователем
+
+    vectorpolz = np.mean(np.array(listScam), axis=0)
+
+
+    #Construct the required TF-IDF matrix by applying the fit_transform method on the overview feature
+    listScam = []
+    for i in db.allNotRate(pice,metro,userId):
+        listScam.append(i.data)  # трансформация в кучу векторов эл питонячьего списка
+
+    # overview_matrix = tfidf.fit_transform(np.array(listScam))  # трансформация в кучу векторов эл питонячьего списка
+    overview_matrix = np.array(listScam)
+    overview_matrix = overview_matrix.squeeze(1)
+    similarity_matrix = linear_kernel(overview_matrix,vectorpolz) #МАтрица сходства
     # vectorpolz = summaiz(overview_matrix_polz)#среднее арифметические векторов
     #тут будет задаваться вектор пользователя
     # movie_index = mapping[movie_input]
@@ -84,7 +85,7 @@ def getRoom(pice, metro, userId):
 
     # получить значения сходства с другими квартирами
     #similarity_score - это список индекса и матрицы скотства
-    similarity_score = list(enumerate(vectorpolz)) #d вместо индекса будем вводить функцию, отвечающую за вектор пользователя
+    similarity_score = list(enumerate(similarity_matrix)) #d вместо индекса будем вводить функцию, отвечающую за вектор пользователя
     similarity_score = sorted(similarity_score, key=lambda x: x[1], reverse=True) # сортировать по убыванию показатель сходства кв, введенный со всеми другими кв
     similarity_score = similarity_score[0]# список квартир, не совсем понятно, какойд длины, обсуждение приветствуется
     # movie_indices = [i[0] for i in similarity_score] #вывод куда-нибудь когда-нибудь

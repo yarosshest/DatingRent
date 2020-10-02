@@ -1,7 +1,9 @@
 import datetime
 from datetime import datetime
 import sqlalchemy
-from sqlalchemy import create_engine, DateTime, func, Boolean, Float
+from sklearn.feature_extraction.text import TfidfVectorizer
+import numpy as np
+from sqlalchemy import create_engine, DateTime, func, Boolean, Float, PickleType
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
@@ -9,13 +11,14 @@ from sqlalchemy.orm import sessionmaker, relationship, backref, Query
 from sqlalchemy.sql import select
 from sqlalchemy.dialects.sqlite import DATETIME
 from sqlalchemy import func
-# from srvn import preprocess_text
+from srvn import preprocess_text
 import srvn
 
 # расположение БД
 engine = create_engine('sqlite:///links.db', echo=False)
 Base = declarative_base()
 meta = MetaData()
+
 
 
 # Таблица пользователей
@@ -72,6 +75,7 @@ class Apartments(Base):
     ucan = Column(String)
     tegs = Column(String)
     tegLem = Column(String)
+    vector = Column(PickleType)
 
 
 # Таблица ссылок
@@ -230,7 +234,7 @@ class DatabaseFuction(object):
             if ap.id in rate:
                 pass
             else:
-                response.append(ap.tegLem)
+                response.append(ap.vector)
         session.close()
         return response
 
@@ -244,17 +248,18 @@ class DatabaseFuction(object):
             rate.append(ap[0])
         for ap in list:
             if ap.id in rate:
-                response.append(ap.tegLem)
+                response.append(ap.vector)
         session.close()
         return response
 
-    def getForTegs(self, tegs):
+    def getForVector(self, vector):
         session = self.Session()
-        list = session.query(Apartments).filter(Apartments.tegLem == tegs)
-        responce = list.first()
-        session.commit()
+        list = session.query(Apartments).all()
+        for i in list:
+            if i.vector == vector:
+                responce = i
+        session.close()
         return responce
-
 
     # def lemon(self):
     #     session = self.Session()
@@ -268,8 +273,30 @@ class DatabaseFuction(object):
     #         print(col)
     #     session.close()
 
+    def vectorize(self):
+        session = self.Session()
+        tfidf = TfidfVectorizer(stop_words=None)
+        list = session.query(Apartments).all()
+        all = []
+        for i in list:
+            all.append(i.tegLem)
+        overview_matrix = tfidf.fit_transform(np.array(all))
+        for i, j in zip(overview_matrix, list):
+            j.vector = i.toarray()
+            session.commit()
+        session.close()
+
+    def getVector(self, id):
+        session = self.Session()
+        ap = session.query(Apartments.vector).filter(Apartments.id == id)
+        ap = ap.first()
+        session.close()
+        return ap
+
+
+
 def getRec(DBase, pice, metro, userId):
-    return DBase.getForTegs(srvn.getRoom(pice, metro, userId))
+    return DBase.getForVector(srvn.getRoom(pice, metro, userId))
 
 # Вход в сиситему пользователя
 def LoginUser(DBase, login, password):
@@ -292,5 +319,9 @@ def createBd():
     Base.metadata.create_all(engine)
     return DatabaseFuction()
 
-# db = createBd()
-# db.lemon()
+if __name__ == '__main__':
+    db = createBd()
+    db.vectorize()
+    # al = (db.getVector(1))
+    # print("fkgmdfkgmfdkvmkdfv")
+
