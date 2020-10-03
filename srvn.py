@@ -7,7 +7,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 import nltk
-import pymystem3
 nltk.download("stopwords")
 from nltk.corpus import stopwords
 from pymystem3 import Mystem

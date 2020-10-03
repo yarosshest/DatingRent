@@ -112,6 +112,7 @@ def UserLab():
 
                 db.Rate(session['userId'], session['roomID'], bool(int(request.form['rate'])))
                 Ap = EnterInSystem.getRec(db, session["MaxAmount"], session["Metro"], session['userId'])
+                session['roomID'] = Ap.id
                 price = Ap.price
                 undergrounds = Ap.undergrounds
                 discription = Ap.discription

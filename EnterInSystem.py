@@ -227,12 +227,12 @@ class DatabaseFuction(object):
         response = []
         list = session.query(Apartments).filter(Apartments.price <= pice,Apartments.undergrounds.ilike("%"+metro+"%")).all()
         rate = []
-        rated = session.query(Rates.Apartments_id).filter(Rates.Users_id == userId, Rates.rate == 1).all()
+        rated = session.query(Rates.Apartments_id).filter(Rates.Users_id == userId).all()
         for ap in rated:
             rate.append(ap[0])
         for ap in list:
             if ap.id in rate:
-                pass
+                print(ap.id)
             else:
                 response.append(ap.vector)
         session.close()
@@ -255,8 +255,10 @@ class DatabaseFuction(object):
     def getForVector(self, vector):
         session = self.Session()
         list = session.query(Apartments).all()
+
         for i in list:
-            if i.vector == vector:
+            c = i.vector == vector.obj
+            if c.all():
                 responce = i
         session.close()
         return responce
