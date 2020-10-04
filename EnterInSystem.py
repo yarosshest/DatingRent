@@ -11,7 +11,7 @@ from sqlalchemy.orm import sessionmaker, relationship, backref, Query
 from sqlalchemy.sql import select
 from sqlalchemy.dialects.sqlite import DATETIME
 from sqlalchemy import func
-from srvn import preprocess_text
+from tool import preprocess_text
 import srvn
 
 # расположение БД
@@ -40,6 +40,7 @@ class Rates(Base):
     Users_id = Column(Integer, ForeignKey('Users.id'))
     Apartments_id = Column(Integer, ForeignKey('Apartments.id'))
     rate = Column(Boolean)
+
 
     def __init__(self, idU, idA, rate):
         self.Users_id = idU
@@ -263,17 +264,15 @@ class DatabaseFuction(object):
         session.close()
         return responce
 
-    # def lemon(self):
-    #     session = self.Session()
-    #     list = session.query(Apartments).all()
-    #     col = 0
-    #     for ap in list:
-    #         if ap.tegs != '':
-    #             ap.tegLem = preprocess_text(ap.tegs)
-    #             session.commit()
-    #         col = col +1
-    #         print(col)
-    #     session.close()
+    def lemon(self):
+        session = self.Session()
+        list = session.query(Apartments).all()
+        for ap in list:
+            if ap.tegs != '' and ap.tegLem == '':
+                ap.tegLem = preprocess_text(ap.tegs)
+                session.commit()
+            print(ap.id)
+        session.close()
 
     def vectorize(self):
         session = self.Session()
@@ -294,6 +293,14 @@ class DatabaseFuction(object):
         ap = ap.first()
         session.close()
         return ap
+
+    def dellLink(self, link):
+        session = self.Session()
+        lin = session.query(Links).filter(Links.link == link)
+        lin = lin.first()
+        session.delete(lin)
+        session.commit()
+        session.close()
 
 
 
@@ -324,6 +331,4 @@ def createBd():
 if __name__ == '__main__':
     db = createBd()
     db.vectorize()
-    # al = (db.getVector(1))
-    # print("fkgmdfkgmfdkvmkdfv")
 
