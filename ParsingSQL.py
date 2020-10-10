@@ -164,6 +164,7 @@ for site in db.getAllLinks():
                 room.tegs = tegs
                 room.tegLem = tegLem
                 db.addRoom(room)
+                print(site)
             except:
                 pass
             # except OSError as err:

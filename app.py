@@ -64,28 +64,30 @@ def login():
 def UserLab_GET():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
+            Ap = EnterInSystem.getRec(db, session["MaxAmount"], session["Metro"], session['userId'])
+            if Ap != None:
+                # затычка пока нет алгоритма
+                session['roomID'] = Ap.id
+                price = Ap.price
+                undergrounds = Ap.undergrounds
+                discription = Ap.discription
+                room = Ap.room
+                photo = Ap.photo
+                area = Ap.area
+                address = Ap.address
+                ucan = Ap.ucan.split('/')
+                del ucan[len(ucan) - 1]
+                items = Ap.items.split('/')
+                del items[len(items) - 1]
+                l = photo.split()
+                photo1 = l[0]
+                del l[0]
+                return render_template('UserLab.html', price=price, address=address, undergrounds=undergrounds, discription=discription,
+                                       photo1=photo1, photoAr=l, room=room, area=area, items=items, ucan=ucan)
             # затычка пока нет алгоритма
-
-            Ap = db.RoomForId(1)
-            session['roomID'] =1
-            price = Ap.price
-            undergrounds = Ap.undergrounds
-            discription = Ap.discription
-            photo = Ap.photo
-            room = Ap.room
-            area = Ap.area
-            address = Ap.address
-            price = Ap.price
-            ucan = Ap.ucan
-
-            items = Ap.items.split('/')
-            del items[len(items) - 1]
-            l = photo.split()
-            photo1 = l[0]
-            del l[0]
-            return render_template('UserLab.html', price=price, address=address, undergrounds=undergrounds, discription=discription,
-                                   photo1=photo1, photoAr=l, room=room, area=area, items=items, ucan=ucan)
-            # затычка пока нет алгоритма
+            else:
+                session["eer"] = "Квартир не найдено"
+                return redirect(url_for('Filtr'))
         else:
             return render('login.html')
 
@@ -108,10 +110,12 @@ def UserLab():
                 return redirect(url_for('Filtr'))
 
             if "rate" in request.form:  # поиск
-                # затычка пока нет алгоритма
-
                 db.Rate(session['userId'], session['roomID'], bool(int(request.form['rate'])))
-                Ap = EnterInSystem.getRec(db, session["MaxAmount"], session["Metro"], session['userId'])
+
+            Ap = EnterInSystem.getRec(db, session["MaxAmount"], session["Metro"], session['userId'])
+
+            if Ap != None:
+                # затычка пока нет алгоритма
                 session['roomID'] = Ap.id
                 price = Ap.price
                 undergrounds = Ap.undergrounds
@@ -123,17 +127,38 @@ def UserLab():
                 ucan = Ap.ucan.split('/')
                 del ucan[len(ucan) - 1]
                 items = Ap.items.split('/')
-                del items[len(items)-1]
+                del items[len(items) - 1]
                 l = photo.split()
                 photo1 = l[0]
                 del l[0]
                 return render_template('UserLab.html', price=price, address=address, undergrounds=undergrounds,
-                              discription=discription, photo1=photo1, photoAr=l, room=room, area=area, items=items, ucan=ucan)
-                # затычка пока нет алгоритма
+                                       discription=discription,
+                                       photo1=photo1, photoAr=l, room=room, area=area, items=items, ucan=ucan)
+            # затычка пока нет алгоритма
+            else:
+                session["eer"] = "Квартир не найдено"
+                return redirect(url_for('Filtr'))
         else:
             return render('login.html')
     else:
         return redirect(url_for('login'))
+
+
+
+
+@app.route("/LK", methods=['GET'])
+def LK_GET():
+    if 'Login' in session:  # проверка на залогиненость
+        if session['Login']:
+            like = db.allAplike(session['userId'])
+            dislike = db.allApDislike(session['userId'])
+            return render('LK.html', like=like, dislike=dislike)
+        else:
+            return render('login.html')
+
+    else:
+        return redirect(url_for('login'))
+
 
 
 # Получение фильтра
@@ -141,7 +166,11 @@ def UserLab():
 def Filtr_GET():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
-            return render('Filtr.html')
+            if "err" in session:
+                err = session['err']
+                return render('Filtr.html', err=session['err'])
+            else:
+                return render('Filtr.html')
         else:
             return render('login.html')
     else:

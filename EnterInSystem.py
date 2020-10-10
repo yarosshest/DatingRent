@@ -13,6 +13,7 @@ from sqlalchemy.dialects.sqlite import DATETIME
 from sqlalchemy import func
 from tool import preprocess_text
 import srvn
+import random
 
 # расположение БД
 engine = create_engine('sqlite:///links.db', echo=False)
@@ -233,7 +234,7 @@ class DatabaseFuction(object):
             rate.append(ap[0])
         for ap in list:
             if ap.id in rate:
-                print(ap.id)
+                pass
             else:
                 response.append(ap.vector)
         session.close()
@@ -250,6 +251,34 @@ class DatabaseFuction(object):
         for ap in list:
             if ap.id in rate:
                 response.append(ap.vector)
+        session.close()
+        return response
+
+    def allApDislike(self, userId):
+        session = self.Session()
+        response = []
+        list = session.query(Apartments).all()
+        rate = []
+        rated = session.query(Rates.Apartments_id).filter(Rates.Users_id == userId, Rates.rate == 0).all()
+        for ap in rated:
+            rate.append(ap[0])
+        for ap in list:
+            if ap.id in rate:
+                response.append(ap)
+        session.close()
+        return response
+
+    def allAplike(self, userId):
+        session = self.Session()
+        response = []
+        list = session.query(Apartments).all()
+        rate = []
+        rated = session.query(Rates.Apartments_id).filter(Rates.Users_id == userId, Rates.rate == 1).all()
+        for ap in rated:
+            rate.append(ap[0])
+        for ap in list:
+            if ap.id in rate:
+                response.append(ap)
         session.close()
         return response
 
@@ -271,7 +300,7 @@ class DatabaseFuction(object):
             if ap.tegs != '' and ap.tegLem == '':
                 ap.tegLem = preprocess_text(ap.tegs)
                 session.commit()
-            print(ap.id)
+            pass
         session.close()
 
     def vectorize(self):
@@ -302,10 +331,36 @@ class DatabaseFuction(object):
         session.commit()
         session.close()
 
+    def colRate(self, userId):
+        session = self.Session()
+        rated = session.query(Rates).filter(Rates.Users_id == userId, Rates.rate == 1)
+        session.close()
+        return rated.count()
+
+    def randFiltAp(self, pice, metro):
+        session = self.Session()
+        list = session.query(Apartments).filter(Apartments.price <= pice,Apartments.undergrounds.ilike("%" + metro + "%")).all()
+        session.close()
+        return random.choice(list)
+
+    def colFilt(self, pice, metro):
+        session = self.Session()
+        list = session.query(Apartments).filter(Apartments.price <= pice,
+                                                Apartments.undergrounds.ilike("%" + metro + "%"))
+        session.close()
+        return list.count()
+
 
 
 def getRec(DBase, pice, metro, userId):
-    return DBase.getForVector(srvn.getRoom(pice, metro, userId))
+    if DBase.colFilt(pice, metro) >0:
+        if DBase.colRate(userId) > 0:
+            responce = DBase.getForVector(srvn.getRoom(pice, metro, userId))
+        else:
+            responce = DBase.randFiltAp(pice, metro)
+    else:
+        responce = None
+    return responce
 
 # Вход в сиситему пользователя
 def LoginUser(DBase, login, password):
