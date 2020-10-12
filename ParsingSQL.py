@@ -83,9 +83,6 @@ for site in db.getAllLinks():
                             i].text + '/'  # сборка эл
                 # print(items)
 
-                tegs = items +' ' +ucan +' '+ opisanie
-                tegLem = preprocess_text(tegs)
-
                 colvo = driver.find_element_by_xpath('//*[@id="photos"]/div[2]/div/div[2]').text  # кол-во фоточек
                 x = colvo.split()[0]  # вычленяем из этого инт
                 try:
@@ -108,7 +105,7 @@ for site in db.getAllLinks():
                         '//div[@class="fotorama__arr fotorama__arr--next"]').click()  # видим кнопку переключения на след кнопку
                     fotoochka = fotoochka + url + ' '  # все будет нашим
                     # print(fotoochka)
-                    time.sleep(0.1)  # прогрузиться, потом и поговорим
+                    time.sleep(0.2)  # прогрузиться, потом и поговорим
 
                 undergrounds = metro + " " + metrotime
 
@@ -161,8 +158,8 @@ for site in db.getAllLinks():
                 room.area = float(obshplo)
                 room.items = items
                 room.ucan = ucan
+                tegs = items + ' ' + ucan + ' ' + opisanie
                 room.tegs = tegs
-                room.tegLem = tegLem
                 db.addRoom(room)
                 print(site)
             except:

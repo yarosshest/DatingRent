@@ -11,7 +11,6 @@ from sqlalchemy.orm import sessionmaker, relationship, backref, Query
 from sqlalchemy.sql import select
 from sqlalchemy.dialects.sqlite import DATETIME
 from sqlalchemy import func
-from tool import preprocess_text
 import srvn
 import random
 
@@ -293,15 +292,24 @@ class DatabaseFuction(object):
         session.close()
         return responce
 
-    def lemon(self):
+    def PushLemon(self, apId,lem):
+        session = self.Session()
+        list = session.query(Apartments).filter(Apartments.id == apId)
+        ap = list.first()
+        ap.tegLem = lem
+        session.commit()
+        session.close()
+
+    def PullLemon(self):
         session = self.Session()
         list = session.query(Apartments).all()
+        reply = []
         for ap in list:
-            if ap.tegs != '' and ap.tegLem == '':
-                ap.tegLem = preprocess_text(ap.tegs)
-                session.commit()
+            if ap.tegs != '' and ap.tegLem == None:
+                reply.append([ap.id, ap.tegs])
             pass
         session.close()
+        return reply
 
     def vectorize(self):
         session = self.Session()
