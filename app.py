@@ -54,7 +54,7 @@ def login():
         # Костыль для удаления
         session['scam'] = 0
         # Костыль для удаления
-        return redirect(url_for('Filtr'))
+        return redirect(url_for('office_GET'))
     if replay == "Wrong login password":
         return render('login.html', err="Неверный логин пароль")
 
@@ -100,11 +100,15 @@ def UserLab_GET():
 def UserLab():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
-            if 'exit' in request.form:  # выход из сессии
-                session['email'] = None
-                session['password'] = None
-                session['Login'] = False
-                return redirect(url_for('login'))
+            if 'exit' in request.form:
+                if request.form["exit"] == "exit":# выход из сессии
+                    session['email'] = None
+                    session['password'] = None
+                    session['Login'] = False
+                    return redirect(url_for('login'))
+
+                if request.form["exit"] == "UserOffice":
+                    return redirect(url_for('office_GET'))
 
             if 'filter' in request.form:  # изминение фильтра
                 return redirect(url_for('Filtr'))
@@ -151,8 +155,85 @@ def LK_GET():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
             like = db.allAplike(session['userId'])
+            return render('LK.html', like=like)
+        else:
+            return render('login.html')
+
+    else:
+        return redirect(url_for('login'))
+
+
+@app.route("/LK", methods=['POST'])
+def LK_POST():
+    if 'Login' in session:  # проверка на залогиненость
+        if session['Login']:
+            if "end" in request.form:
+                if request.form["end"] == "1":
+                    return redirect(url_for('office_GET'))
+
+            return redirect(url_for('LK_GET'))
+        else:
+            return render('login.html')
+
+    else:
+        return redirect(url_for('login'))
+
+@app.route("/DL", methods=['GET'])
+def DL_GET():
+    if 'Login' in session:  # проверка на залогиненость
+        if session['Login']:
             dislike = db.allApDislike(session['userId'])
-            return render('LK.html', like=like, dislike=dislike)
+            return render('DL.html', dislike=dislike)
+        else:
+            return render('login.html')
+
+    else:
+        return redirect(url_for('login'))
+
+@app.route("/DL", methods=['POST'])
+def DL_POST():
+    if 'Login' in session:  # проверка на залогиненость
+        if session['Login']:
+            if "end" in request.form:
+                if request.form['end'] == '1':
+                    return redirect(url_for('office_GET'))
+
+            return redirect(url_for('DL_GET'))
+        else:
+            return render('login.html')
+
+    else:
+        return redirect(url_for('login'))
+
+
+@app.route("/office", methods=['GET'])
+def office_GET():
+    if 'Login' in session:  # проверка на залогиненость
+        if session['Login']:
+            return render('office.html')
+        else:
+            return render('login.html')
+
+    else:
+        return redirect(url_for('login'))
+
+
+@app.route("/office", methods=['POST'])
+def office_POST():
+    if 'Login' in session:  # проверка на залогиненость
+        if session['Login']:
+            if "end" in request.form:
+                if request.form['end'] == "like":
+                    return redirect(url_for('LK_GET'))
+
+                if request.form['end'] == 'Dislike':
+                    return redirect(url_for('DL_GET'))
+
+                if request.form['end'] == "Search":
+                    return redirect(url_for('Filtr_GET'))
+
+            return render('office.html')
+
         else:
             return render('login.html')
 
@@ -168,7 +249,7 @@ def Filtr_GET():
         if session['Login']:
             if "err" in session:
                 err = session['err']
-                return render('Filtr.html', err=session['err'])
+                return render('Filtr.html', err=err)
             else:
                 return render('Filtr.html')
         else:
@@ -219,6 +300,7 @@ def registr():
 @app.route('/', methods=['GET', 'POST'])
 def home():
     return redirect(url_for('login'))
+
 
 def render(template, **params):
     t = jinja_env.get_template(template)

@@ -4,18 +4,6 @@
         <meta charset="UTF-8">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
             <style type="text/css">
-                {#.container {#}
-                {#    width: 70%;#}
-                {#    margin-top: 20px;#}
-                {#    margin-left: auto;#}
-                {#    margin-right: auto;#}
-                {#}#}
-
-                .item-img {
-                  width: 600px;
-                  height: 350px;
-                }
-
             </style>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -28,21 +16,9 @@
     <body>
         <form method="post">
             <div class="container">
-                <button class="btn btn-success" name="end" value="1">В личный кабинет</button>
-                <div class="row">
-                    <div class="col">
-                        {% for i in like %}
-                            <ly class="row">
-                                <ly class="col">
-                                    <img src="{{ i.photo.split()[0] }}" class="item-img" alt="...">
-                                </ly>
-                                <ly class="col">
-                                    <h3 class="card-title">{{ i.price }} ₽/мес.</h3>
-                                </ly>
-                            </ly>
-                        {% endfor %}
-                    </div>
-                </div>
+                <button class="btn btn-success" name="end" value="like">Понравившиеся обьявления</button>
+                <button class="btn btn-danger" name="end" value="Dislike">Не понравившиеся обьявления</button>
+                <button class="btn btn-primary" name="end" value="Search">Поиск обьявлений</button>
             </div>
         </form>
     </body>
