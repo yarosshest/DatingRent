@@ -1,25 +1,10 @@
-import sqlite3
 import numpy as np
-import pandas as pd
-from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
-import nltk
-nltk.download("stopwords")
-from nltk.corpus import stopwords
 from pymystem3 import Mystem
-from string import punctuation
-
-from itertools import zip_longest
-from statistics import mean
 import EnterInSystem
-import sparse
-
 # Create lemmatizer and stopwords list
 mystem = Mystem()
-russian_stopwords = stopwords.words("russian")
 
 
 def getRoom(pice, metro, userId):

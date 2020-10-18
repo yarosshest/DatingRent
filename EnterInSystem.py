@@ -1,6 +1,3 @@
-import datetime
-from datetime import datetime
-import sqlalchemy
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 from sqlalchemy import create_engine, DateTime, func, Boolean, Float, PickleType
@@ -8,9 +5,6 @@ from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, backref, Query
-from sqlalchemy.sql import select
-from sqlalchemy.dialects.sqlite import DATETIME
-from sqlalchemy import func
 import srvn
 import random
 

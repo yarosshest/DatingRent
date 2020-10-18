@@ -1,14 +1,14 @@
-from flask import Flask, request, redirect, url_for, session, render_template
+from flask import Flask, request, redirect, url_for, session, render_template, send_from_directory
 import os
 import jinja2
 import EnterInSystem
 
 # инициализация веб приложения
-app = Flask(__name__, static_url_path="/static")
+application = Flask(__name__)
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir), autoescape=True)
-app.secret_key = '565009BA357CD1A05165F7E729DE7693'
+application.secret_key = '565009BA357CD1A05165F7E729DE7693'
 
 
 def render(template, **params):
@@ -21,12 +21,21 @@ db = EnterInSystem.createBd()
 
 # Старт приложения
 if __name__ == '__main__':
-    #app.run(debug=False,host='0.0.0.0')
-    app.run(debug=True)
+    application.run(host='0.0.0.0')
+
+
+@application.route('/service-worker.js', methods=['GET'])
+def sw():
+    return application.send_static_file('service-worker.js')
+
+
+@application.route('/offline', methods=['GET'])
+def offline():
+    return application.send_static_file('offline.html')
 
 
 # Получение страницы логина
-@app.route('/login', methods=['GET'])
+@application.route('/login', methods=['GET'])
 def login_Get():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
@@ -41,7 +50,7 @@ def login_Get():
 
 
 # Собственно логин
-@app.route('/login', methods=['GET', 'POST'])
+@application.route('/login', methods=['GET', 'POST'])
 def login():
     email = request.form['Email']
     password = request.form['password']
@@ -60,7 +69,7 @@ def login():
 
 
 # Получение главной страницы приложения
-@app.route("/UserLab", methods=['GET'])
+@application.route("/UserLab", methods=['GET'])
 def UserLab_GET():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
@@ -96,7 +105,7 @@ def UserLab_GET():
 
 
 # Главная страница приложения
-@app.route("/UserLab", methods=['POST'])
+@application.route("/UserLab", methods=['POST'])
 def UserLab():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
@@ -150,7 +159,7 @@ def UserLab():
 
 
 
-@app.route("/LK", methods=['GET'])
+@application.route("/LK", methods=['GET'])
 def LK_GET():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
@@ -163,7 +172,7 @@ def LK_GET():
         return redirect(url_for('login'))
 
 
-@app.route("/LK", methods=['POST'])
+@application.route("/LK", methods=['POST'])
 def LK_POST():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
@@ -178,7 +187,7 @@ def LK_POST():
     else:
         return redirect(url_for('login'))
 
-@app.route("/DL", methods=['GET'])
+@application.route("/DL", methods=['GET'])
 def DL_GET():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
@@ -190,7 +199,7 @@ def DL_GET():
     else:
         return redirect(url_for('login'))
 
-@app.route("/DL", methods=['POST'])
+@application.route("/DL", methods=['POST'])
 def DL_POST():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
@@ -206,7 +215,7 @@ def DL_POST():
         return redirect(url_for('login'))
 
 
-@app.route("/office", methods=['GET'])
+@application.route("/office", methods=['GET'])
 def office_GET():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
@@ -218,7 +227,7 @@ def office_GET():
         return redirect(url_for('login'))
 
 
-@app.route("/office", methods=['POST'])
+@application.route("/office", methods=['POST'])
 def office_POST():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
@@ -243,7 +252,7 @@ def office_POST():
 
 
 # Получение фильтра
-@app.route("/Filtr", methods=['GET'])
+@application.route("/Filtr", methods=['GET'])
 def Filtr_GET():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
@@ -259,7 +268,7 @@ def Filtr_GET():
 
 
 # Фильтр
-@app.route("/Filtr", methods=['POST'])
+@application.route("/Filtr", methods=['POST'])
 def Filtr():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
@@ -276,13 +285,13 @@ def Filtr():
 
 
 # Получение страницы регистрации
-@app.route('/registr', methods=['GET'])
+@application.route('/registr', methods=['GET'])
 def registr_Get():
     return render('registr.html')
 
 
 # Регистрация
-@app.route('/registr', methods=['GET', 'POST'])
+@application.route('/registr', methods=['GET', 'POST'])
 def registr():
     email = request.form['Email']
     password = request.form['password']
@@ -297,7 +306,7 @@ def registr():
 
 
 # Нулевая страница
-@app.route('/', methods=['GET', 'POST'])
+@application.route('/', methods=['GET', 'POST'])
 def home():
     return redirect(url_for('login'))
 
