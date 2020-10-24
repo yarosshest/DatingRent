@@ -3,7 +3,7 @@
     "background_color": "#4b35f6",
     "display": "standalone",
     "scope": "/",
-    "start_url": "/o",
+    "start_url": "/",
     "orientation": "portrait",
     "name": "Rent Daiting",
     "short_name": "Rent Daiting",
@@ -11,13 +11,13 @@
         {
             "src": "/static/images/icon-96x96.png",
             "sizes": "96x96",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any maskable"
         },
         {
             "src": "/static/images/icon-192x192.png",
             "sizes": "192x192",
             "type": "image/png",
-            "purpose": "any maskable"
         },
         {
             "src": "/static/images/icon-256x256.png",

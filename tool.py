@@ -7,6 +7,7 @@ import EnterInSystem
 mystem = Mystem()
 russian_stopwords = stopwords.words("russian")
 
+
 def preprocess_text(text): # функция от бога, буду молиться на человека, подарившего мне ее
     tokens = mystem.lemmatize(text.lower())
     tokens = [token for token in tokens if token not in russian_stopwords \
@@ -16,6 +17,7 @@ def preprocess_text(text): # функция от бога, буду молить
     text = " ".join(tokens)
 
     return text
+
 
 class lemTread (Thread):
     def __init__(self,db, apId, tegs):

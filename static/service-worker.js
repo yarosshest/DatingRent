@@ -1,6 +1,8 @@
-const staticCacheName = 'static-cache-v2';
+const staticCacheName = 'static-cache-v4';
 const staticAssets = [
     'offline',
+    'app',
+    'img',
 ];
 
 self.addEventListener('install', (evt) => {

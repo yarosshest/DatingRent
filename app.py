@@ -34,6 +34,16 @@ def offline():
     return application.send_static_file('offline.html')
 
 
+@application.route('/app', methods=['GET'])
+def app():
+    return application.send_static_file('js/app.js')
+
+
+@application.route('/img', methods=['GET'])
+def img():
+    return application.send_static_file('images/icon-192x192.png')
+
+
 # Получение страницы логина
 @application.route('/login', methods=['GET'])
 def login_Get():
