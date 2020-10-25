@@ -7,12 +7,12 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, backref, Query
 import srvn
 import random
+from raitRemont import rate_room
 
 # расположение БД
 engine = create_engine('sqlite:///links.db', echo=False)
 Base = declarative_base()
 meta = MetaData()
-
 
 
 # Таблица пользователей
@@ -35,7 +35,6 @@ class Rates(Base):
     Apartments_id = Column(Integer, ForeignKey('Apartments.id'))
     rate = Column(Boolean)
 
-
     def __init__(self, idU, idA, rate):
         self.Users_id = idU
         self.Apartments_id = idA
@@ -54,6 +53,7 @@ class Apartments(Base):
     room = Column(String)
     area = Column(Float)
     link = Column(String)
+    ren = Column(Boolean)
     furnitRoom = Column(Boolean, default=False)
     furnitKitch = Column(Boolean, default=False)
     fridge = Column(Boolean, default=False)
@@ -148,7 +148,6 @@ class DatabaseFuction(object):
             session.commit()
         session.close()
 
-
     # добавление квартиры
     def addRoomList(self, price, address, undergrounds, discription, photo, room, area, link):
         session = self.Session()
@@ -177,7 +176,7 @@ class DatabaseFuction(object):
     # Получение всех ссылок
     def getAllLinks(self):
         session = self.Session()
-        l =[]
+        l = []
         for instance in session.query(Links.link):
             l.append(instance.link)
 
@@ -195,7 +194,7 @@ class DatabaseFuction(object):
         return l
 
     # Проверка дублирования ссылки
-    def linkChek(self,link):
+    def linkChek(self, link):
         session = self.Session()
         r = session.query(Links).filter(Links.link == link)
         if r.count() >= 1:
@@ -206,7 +205,7 @@ class DatabaseFuction(object):
             return True
 
     # Проверка дублирования квартиры
-    def RoomChek(self,link):
+    def RoomChek(self, link):
         session = self.Session()
         r = session.query(Apartments).filter(Apartments.link == link)
         A = r.count()
@@ -220,7 +219,8 @@ class DatabaseFuction(object):
     def allNotRate(self, pice, metro, userId):
         session = self.Session()
         response = []
-        list = session.query(Apartments).filter(Apartments.price <= pice,Apartments.undergrounds.ilike("%"+metro+"%")).all()
+        list = session.query(Apartments).filter(Apartments.price <= pice,
+                                                Apartments.undergrounds.ilike("%" + metro + "%")).all()
         rate = []
         rated = session.query(Rates.Apartments_id).filter(Rates.Users_id == userId).all()
         for ap in rated:
@@ -286,7 +286,7 @@ class DatabaseFuction(object):
         session.close()
         return responce
 
-    def PushLemon(self, apId,lem):
+    def PushLemon(self, apId, lem):
         session = self.Session()
         list = session.query(Apartments).filter(Apartments.id == apId)
         ap = list.first()
@@ -294,7 +294,7 @@ class DatabaseFuction(object):
         session.commit()
         session.close()
 
-    def PullLemon(self):
+    def pull_ap_lem(self):
         session = self.Session()
         list = session.query(Apartments).all()
         reply = []
@@ -341,7 +341,8 @@ class DatabaseFuction(object):
 
     def randFiltAp(self, pice, metro):
         session = self.Session()
-        list = session.query(Apartments).filter(Apartments.price <= pice,Apartments.undergrounds.ilike("%" + metro + "%")).all()
+        list = session.query(Apartments).filter(Apartments.price <= pice,
+                                                Apartments.undergrounds.ilike("%" + metro + "%")).all()
         session.close()
         return random.choice(list)
 
@@ -352,10 +353,27 @@ class DatabaseFuction(object):
         session.close()
         return list.count()
 
+    def pull_ap_ren(self):
+        session = self.Session()
+        lst = session.query(Apartments).all()
+        reply = []
+        for ap in lst:
+            if ap.ren is None:
+                reply.append([ap.id, ap.photo])
+        session.close()
+        return reply
+
+    def push_ren(self, ap_id, ren):
+        session = self.Session()
+        lst = session.query(Apartments).filter(Apartments.id == ap_id)
+        ap = lst.first()
+        ap.ren = ren
+        session.commit()
+        session.close()
 
 
 def getRec(DBase, pice, metro, userId):
-    if DBase.colFilt(pice, metro) >0:
+    if DBase.colFilt(pice, metro) > 0:
         if DBase.colRate(userId) > 0:
             responce = DBase.getForVector(srvn.getRoom(pice, metro, userId))
         else:
@@ -363,6 +381,7 @@ def getRec(DBase, pice, metro, userId):
     else:
         responce = None
     return responce
+
 
 # Вход в сиситему пользователя
 def LoginUser(DBase, login, password):
@@ -372,6 +391,7 @@ def LoginUser(DBase, login, password):
     else:
         return "Wrong login password"
 
+
 # Регистрация ползователя
 def RegisterUser(DBase, login, password):
     result = DBase.Register(login, password)
@@ -380,12 +400,13 @@ def RegisterUser(DBase, login, password):
     else:
         return "User already exists"
 
+
 # Создание обьекта для работы с БД
 def createBd():
     Base.metadata.create_all(engine)
     return DatabaseFuction()
 
+
 if __name__ == '__main__':
     db = createBd()
     db.vectorize()
-

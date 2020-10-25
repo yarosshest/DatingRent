@@ -11,7 +11,7 @@ import time
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.webdriver import WebDriver
 import EnterInSystem
-from tool import preprocess_text
+from len import preprocess_text
 db = EnterInSystem.createBd()
 
 chrome_options = Options()

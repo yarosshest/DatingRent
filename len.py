@@ -33,7 +33,7 @@ class lemTread (Thread):
 
 if __name__ == '__main__':
     db = EnterInSystem.createBd()
-    list = db.PullLemon()
+    list = db.pull_ap_lem()
     treds = []
     for ap in list:
         treds.append(lemTread(db, ap[0], ap[1]))
