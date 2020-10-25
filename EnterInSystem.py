@@ -7,7 +7,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, backref, Query
 import srvn
 import random
-from raitRemont import rate_room
 
 # расположение БД
 engine = create_engine('sqlite:///links.db', echo=False)
@@ -199,6 +198,7 @@ class DatabaseFuction(object):
         r = session.query(Links).filter(Links.link == link)
         if r.count() >= 1:
             session.close()
+            session.close()
             return False
         else:
             session.close()
@@ -280,7 +280,7 @@ class DatabaseFuction(object):
         list = session.query(Apartments).all()
 
         for i in list:
-            c = i.vector == vector.obj
+            c = (i.vector == vector)
             if c.all():
                 responce = i
         session.close()
