@@ -216,11 +216,12 @@ class DatabaseFuction(object):
             session.close()
             return True
 
-    def allNotRate(self, pice, metro, userId):
+    def allNotRate(self, pice, metro, userId, ren):
         session = self.Session()
         response = []
         list = session.query(Apartments).filter(Apartments.price <= pice,
-                                                Apartments.undergrounds.ilike("%" + metro + "%")).all()
+                                                Apartments.undergrounds.ilike("%" + metro + "%"),
+                                                Apartments.ren == ren).all()
         rate = []
         rated = session.query(Rates.Apartments_id).filter(Rates.Users_id == userId).all()
         for ap in rated:
@@ -229,6 +230,8 @@ class DatabaseFuction(object):
             if ap.id in rate:
                 pass
             else:
+                if ap.id == 1745:
+                    print("AAAAA")
                 response.append(ap.vector)
         session.close()
         return response
@@ -339,19 +342,21 @@ class DatabaseFuction(object):
         session.close()
         return rated.count()
 
-    def randFiltAp(self, pice, metro):
+    def randFiltAp(self, pice, metro, ren):
         session = self.Session()
         list = session.query(Apartments).filter(Apartments.price <= pice,
-                                                Apartments.undergrounds.ilike("%" + metro + "%")).all()
+                                                Apartments.undergrounds.ilike("%" + metro + "%"),
+                                                Apartments.ren == ren).all()
         session.close()
         return random.choice(list)
 
-    def colFilt(self, pice, metro):
+    def colFilt(self, pice, metro, ren):
         session = self.Session()
-        list = session.query(Apartments).filter(Apartments.price <= pice,
-                                                Apartments.undergrounds.ilike("%" + metro + "%"))
+        lst = session.query(Apartments).filter(Apartments.price <= pice,
+                                                Apartments.undergrounds.ilike("%" + metro + "%"),
+                                                Apartments.ren == ren).all()
         session.close()
-        return list.count()
+        return len(lst)
 
     def pull_ap_ren(self):
         session = self.Session()
@@ -372,12 +377,12 @@ class DatabaseFuction(object):
         session.close()
 
 
-def getRec(DBase, pice, metro, userId):
-    if DBase.colFilt(pice, metro) > 0:
+def getRec(DBase, pice, metro, userId, ren):
+    if DBase.colFilt(pice, metro, ren) > 0:
         if DBase.colRate(userId) > 0:
-            responce = DBase.getForVector(srvn.getRoom(pice, metro, userId))
+            responce = DBase.getForVector(srvn.getRoom(pice, metro, userId, ren))
         else:
-            responce = DBase.randFiltAp(pice, metro)
+            responce = DBase.randFiltAp(pice, metro, ren)
     else:
         responce = None
     return responce

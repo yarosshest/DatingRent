@@ -83,8 +83,9 @@ def login():
 def UserLab_GET():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
-            Ap = EnterInSystem.getRec(db, session["MaxAmount"], session["Metro"], session['userId'])
-            if Ap != None:
+            Ap = EnterInSystem.getRec(db, session["MaxAmount"], session["Metro"], session['userId'],
+                                      session['ren'])
+            if Ap is not None:
                 # затычка пока нет алгоритма
                 session['roomID'] = Ap.id
                 price = Ap.price
@@ -101,8 +102,9 @@ def UserLab_GET():
                 l = photo.split()
                 photo1 = l[0]
                 del l[0]
-                return render_template('UserLab.html', price=price, address=address, undergrounds=undergrounds, discription=discription,
-                                       photo1=photo1, photoAr=l, room=room, area=area, items=items, ucan=ucan)
+                return render_template('UserLab.html', price=price, address=address, undergrounds=undergrounds,
+                                       discription=discription,photo1=photo1, photoAr=l, room=room, area=area,
+                                       items=items, ucan=ucan)
             # затычка пока нет алгоритма
             else:
                 session["eer"] = "Квартир не найдено"
@@ -135,7 +137,7 @@ def UserLab():
             if "rate" in request.form:  # поиск
                 db.Rate(session['userId'], session['roomID'], bool(int(request.form['rate'])))
 
-            Ap = EnterInSystem.getRec(db, session["MaxAmount"], session["Metro"], session['userId'])
+            Ap = EnterInSystem.getRec(db, session["MaxAmount"], session["Metro"], session['userId'], session['ren'])
 
             if Ap != None:
                 # затычка пока нет алгоритма
@@ -287,6 +289,11 @@ def Filtr():
                 session['MaxAmount'] = request.form['MaxAmount']
             if 'Metro' in request.form:
                 session['Metro'] = request.form['Metro']
+
+            session['ren'] = False
+            if 'ren' in request.form:
+                session['ren'] = True
+
             return redirect(url_for('UserLab'))
         else:
             return render('login.html')

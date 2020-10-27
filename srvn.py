@@ -4,7 +4,7 @@ from sklearn.metrics.pairwise import linear_kernel
 import EnterInSystem
 
 
-def getRoom(pice, metro, userId):
+def getRoom(pice, metro, userId, ren):
     tfidf = TfidfVectorizer(stop_words=None)  # составление вектора
 
     db = EnterInSystem.createBd()
@@ -17,7 +17,7 @@ def getRoom(pice, metro, userId):
 
     # Construct the required TF-IDF matrix by applying the fit_transform method on the overview feature
     listScam = []
-    for i in db.allNotRate(pice, metro, userId):
+    for i in db.allNotRate(pice, metro, userId, ren):
         listScam.append(np.array(i.data))  # трансформация в кучу векторов эл питонячьего списка
 
     overview_matrix = np.array(listScam)

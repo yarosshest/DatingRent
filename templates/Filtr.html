@@ -33,17 +33,23 @@
 <script type="text/javascript" src="../static/js/app.js"></script>
 <form method="post">
     <div class="container">
+
         <div class="input-group mb-3">
           <div class="input-group-prepend">
             <span class="input-group-text">₽</span>
           </div>
           <input type="text" class="form-control" placeholder="Максимальная стоимость" name="MaxAmount">
         </div>
+
         <div class="input-group mb-3">
           <input type="text" class="form-control" placeholder="Метро рядом" name="Metro">
         </div>
-        <h1 color ='red'>{{ err }}</h1>
+        <div class="input-group mb-3">
+            <label class="checkbox-inline"><input type="checkbox" name="ren">Хороший ремонт</label>
+        </div>
+
         <button type="submit" class="btn btn-primary mb-2">Найти</button>
+        <h1 color ='red'>{{ err }}</h1>
     </div>
 </form>
 </body>
