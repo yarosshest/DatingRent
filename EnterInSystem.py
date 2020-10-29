@@ -232,7 +232,7 @@ class DatabaseFuction(object):
             else:
                 if ap.id == 1745:
                     print("AAAAA")
-                response.append(ap.vector)
+                response.append(ap)
         session.close()
         return response
 
@@ -380,7 +380,7 @@ class DatabaseFuction(object):
 def getRec(DBase, pice, metro, userId, ren):
     if DBase.colFilt(pice, metro, ren) > 0:
         if DBase.colRate(userId) > 0:
-            responce = DBase.getForVector(srvn.getRoom(pice, metro, userId, ren))
+            responce = DBase.RoomForId(srvn.getRoom(pice, metro, userId, ren))
         else:
             responce = DBase.randFiltAp(pice, metro, ren)
     else:

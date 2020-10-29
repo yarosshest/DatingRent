@@ -1,4 +1,3 @@
-from IPython.core.display import display, HTML
 from tensorflow.keras.models import load_model, Model
 from tensorflow.keras.utils import get_file
 from tensorflow.keras.layers import GlobalAveragePooling2D, BatchNormalization, Activation, Dense, Dropout
