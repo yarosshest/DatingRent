@@ -1,12 +1,9 @@
 import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 import EnterInSystem
 
 
 def getRoom(pice, metro, userId, ren):
-    tfidf = TfidfVectorizer(stop_words=None)  # составление вектора
-
     db = EnterInSystem.createBd()
 
     listScam = []

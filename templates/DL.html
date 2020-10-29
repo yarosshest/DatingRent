@@ -43,12 +43,15 @@
                 <div class="row">
                     <div class="col">
                         {% for i in dislike %}
-                            <ly class="row">
+                            <ly class="row my-4" >
                                 <ly class="col">
                                     <img src="{{ i.photo.split()[0] }}" class="item-img" alt="...">
                                 </ly>
                                 <ly class="col">
                                     <h3 class="card-title">{{ i.price }} ₽/мес.</h3>
+                                </ly>
+                                <ly class="col">
+                                    <button class="btn btn-success" name="rate" value={{ i.id }}>Смотреть</button>
                                 </ly>
                             </ly>
                         {% endfor %}

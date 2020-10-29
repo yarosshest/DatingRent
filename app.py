@@ -78,6 +78,64 @@ def login():
         return render('login.html', err="Неверный логин пароль")
 
 
+@application.route("/relike", methods=['GET'])
+def relike_GET():
+    if 'Login' in session:  # проверка на залогиненость
+        if session['Login']:
+            if "viev" in session:
+                Ap = db.RoomForId(session["viev"])
+                session['roomID'] = Ap.id
+                price = Ap.price
+                undergrounds = Ap.undergrounds
+                discription = Ap.discription
+                room = Ap.room
+                photo = Ap.photo
+                area = Ap.area
+                address = Ap.address
+                ucan = Ap.ucan.split('/')
+                del ucan[len(ucan) - 1]
+                items = Ap.items.split('/')
+                del items[len(items) - 1]
+                l = photo.split()
+                photo1 = l[0]
+                del l[0]
+                return render_template('vievRoom.html', price=price, address=address, undergrounds=undergrounds,
+                                       discription=discription, photo1=photo1, photoAr=l, room=room, area=area,
+                                       items=items, ucan=ucan)
+        else:
+            return redirect(url_for('login'))
+
+    else:
+        return redirect(url_for('login'))
+
+
+@application.route("/relike", methods=['POST'])
+def relike_POST():
+    if 'Login' in session:  # проверка на залогиненость
+        if session['Login']:
+            if "rate" in request.form:
+                db.re_rate(session['userId'], session['roomID'], bool(int(request.form["rate"])))
+                if session["typeViev"]:
+                    return redirect(url_for("LK_GET"))
+                else:
+                    return redirect(url_for("DL_GET"))
+
+            if "exit" in request.form:
+                if request.form["exit"] == "exit":
+                    if session["typeViev"]:
+                        return redirect(url_for("LK_GET"))
+                    else:
+                        return redirect(url_for("DL_GET"))
+
+                if request.form["exit"] == "UserOffice":
+                    return redirect(url_for("office_GET"))
+        else:
+            return redirect(url_for('login'))
+
+    else:
+        return redirect(url_for('login'))
+
+
 # Получение главной страницы приложения
 @application.route("/UserLab", methods=['GET'])
 def UserLab_GET():
@@ -188,9 +246,15 @@ def LK_GET():
 def LK_POST():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
+            if "rate" in request.form:
+                session["viev"] = request.form["rate"]
+                session["typeViev"] = True
+                return redirect(url_for('relike_GET'))
+
             if "end" in request.form:
                 if request.form["end"] == "1":
                     return redirect(url_for('office_GET'))
+
 
             return redirect(url_for('LK_GET'))
         else:
@@ -215,6 +279,11 @@ def DL_GET():
 def DL_POST():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
+            if "rate" in request.form:
+                session["viev"] = request.form["rate"]
+                session["typeViev"] = False
+                return redirect(url_for('relike_GET'))
+
             if "end" in request.form:
                 if request.form['end'] == '1':
                     return redirect(url_for('office_GET'))
@@ -252,6 +321,12 @@ def office_POST():
 
                 if request.form['end'] == "Search":
                     return redirect(url_for('Filtr_GET'))
+
+                if request.form['end'] == "exit":
+                    session['email'] = None
+                    session['password'] = None
+                    session['Login'] = False
+                    return redirect(url_for('login'))
 
             return render('office.html')
 

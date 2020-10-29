@@ -131,6 +131,14 @@ class DatabaseFuction(object):
         session.commit()
         session.close()
 
+    def re_rate(self, idU, idA, rateScore):
+        session = self.Session()
+        rate = session.query(Rates).filter(Rates.Users_id == idU, Rates.Apartments_id == idA).first()
+        rate.rate = rateScore
+        session.add(rate)
+        session.commit()
+        session.close()
+
     # Получение id пользователя
     def UserId(self, Log):
         session = self.Session()
