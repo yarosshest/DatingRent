@@ -144,6 +144,7 @@ def UserLab_GET():
             Ap = EnterInSystem.getRec(db, session["MaxAmount"], session["Metro"], session['userId'],
                                       session['ren'])
             if Ap is not None:
+                del session["eer"]
                 # затычка пока нет алгоритма
                 session['roomID'] = Ap.id
                 price = Ap.price
@@ -165,7 +166,7 @@ def UserLab_GET():
                                        items=items, ucan=ucan)
             # затычка пока нет алгоритма
             else:
-                session["eer"] = "Квартир не найдено"
+                session["eer"] = "Квартир по вашим параметрам  не найдено"
                 return redirect(url_for('Filtr'))
         else:
             return render('login.html')
@@ -198,6 +199,7 @@ def UserLab():
             Ap = EnterInSystem.getRec(db, session["MaxAmount"], session["Metro"], session['userId'], session['ren'])
 
             if Ap != None:
+                del session["eer"]
                 # затычка пока нет алгоритма
                 session['roomID'] = Ap.id
                 price = Ap.price
@@ -219,7 +221,7 @@ def UserLab():
                                        photo1=photo1, photoAr=l, room=room, area=area, items=items, ucan=ucan)
             # затычка пока нет алгоритма
             else:
-                session["eer"] = "Квартир не найдено"
+                session["eer"] = "Квартир по вашим параметрам  не найдено"
                 return redirect(url_for('Filtr'))
         else:
             return render('login.html')
@@ -343,9 +345,9 @@ def office_POST():
 def Filtr_GET():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
-            if "err" in session:
-                err = session['err']
-                return render('Filtr.html', err=err)
+            if 'eer' in session:
+                err = session['eer']
+                return render('Filtr.html', error=err)
             else:
                 return render('Filtr.html')
         else:
