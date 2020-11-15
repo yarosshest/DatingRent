@@ -48,7 +48,9 @@
             <label class="checkbox-inline"><input type="checkbox" name="ren">Хороший ремонт</label>
         </div>
 
-        <button type="submit" class="btn btn-primary mb-2">Найти</button>
+{#        <button type="submit" class="btn btn-primary mb-2">Найти</button>#}
+        <button class="btn btn-success" name="find" value="find">Найти</button>
+        <button class="btn btn-primary" name="exit" value="UserOffice">В личный кабинет</button>
         {% if error %}
             <p class=error><strong>Ошибка:</strong> {{ error }}
         {% endif %}

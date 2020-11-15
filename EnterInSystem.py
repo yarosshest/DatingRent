@@ -381,13 +381,25 @@ class DatabaseFuction(object):
         session.commit()
         session.close()
 
+    def get_col_not_rate(self, pice, metro, userId, ren):
+        session = sessionmaker(bind=engine)()
+        lst_flit = session.query(Apartments).filter(Apartments.price <= pice,
+                                                    Apartments.undergrounds.ilike("%" + metro + "%"),
+                                                    Apartments.ren == ren).all()
+        list_rate = session.query(Rates.Apartments_id).filter(Rates.Users_id == userId).all()
+        response = 0
+        for ap in lst_flit:
+            if not (ap.id in list_rate):
+                response += 1
+
+        session.close()
+        return response
+
 
 def getRec(DBase, pice, metro, userId, ren):
     if DBase.colFilt(pice, metro, ren) > 0:
         if DBase.colRate(userId) > 0:
             responce = DBase.RoomForId(srvn.getRoom(pice, metro, userId, ren))
-            if responce is None:
-                responce = "Все квартиры с данными характеристиками оценены"
         else:
             responce = DBase.randFiltAp(pice, metro, ren)
     else:

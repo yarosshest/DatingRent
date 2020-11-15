@@ -145,11 +145,15 @@ def relike_POST():
 def UserLab_GET():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
-            Ap = EnterInSystem.getRec(db, session["MaxAmount"], session["Metro"], session['userId'],
+
+            col_rate = db.get_col_not_rate(session["MaxAmount"], session["Metro"], session['userId'],
                                       session['ren'])
-            if Ap == "Все квартиры с данными характеристиками оценены":
+            if col_rate == 0:
                 session['eer'] = "Все квартиры с данными характеристиками оценены"
                 return redirect(url_for('Filtr'))
+
+            Ap = EnterInSystem.getRec(db, session["MaxAmount"], session["Metro"], session['userId'],
+                                      session['ren'])
 
             if Ap is not None:
                 if "eer" in session:
@@ -340,17 +344,20 @@ def Filtr_GET():
 def Filtr():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
-            # получение фильтров
-            if 'MaxAmount' in request.form:
-                session['MaxAmount'] = request.form['MaxAmount']
-            if 'Metro' in request.form:
-                session['Metro'] = request.form['Metro']
+            if 'find' in request.form:
+                # получение фильтров
+                if 'MaxAmount' in request.form:
+                    session['MaxAmount'] = request.form['MaxAmount']
+                if 'Metro' in request.form:
+                    session['Metro'] = request.form['Metro']
 
-            session['ren'] = False
-            if 'ren' in request.form:
-                session['ren'] = True
-
-            return redirect(url_for('UserLab'))
+                session['ren'] = False
+                if 'ren' in request.form:
+                    session['ren'] = True
+                return redirect(url_for('UserLab'))
+            if 'exit' in request.form:
+                session['eer'] = None
+                return redirect(url_for("office_GET"))
         else:
             return render('login.html')
     else:
