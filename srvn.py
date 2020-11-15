@@ -15,7 +15,10 @@ def getRoom(pice, metro, userId, ren):
     # Construct the required TF-IDF matrix by applying the fit_transform method on the overview feature
     listAp = []
     for i in db.allNotRate(pice, metro, userId, ren):
-        listAp.append([i.id, i.vector.data])  # трансформация в кучу векторов эл питонячьего списка
+        if i.vector is None:
+            print("err vec "+str(i.id))
+        else:
+            listAp.append([i.id, i.vector.data])  # трансформация в кучу векторов эл питонячьего списка
 
     for i in listAp:
         i[1] = float(linear_kernel(i[1], vectorpolz))

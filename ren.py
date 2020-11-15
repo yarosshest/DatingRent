@@ -29,7 +29,7 @@ aps = db.pull_ap_ren()
 # pool = ThreadPool(20)
 # pool.map(ren_tread, db, aps[][0], aps[1])
 
-n = 20
+n = 30
 treds = []
 for ap in aps:
     if len(treds) < n:

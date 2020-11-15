@@ -144,7 +144,8 @@ def UserLab_GET():
             Ap = EnterInSystem.getRec(db, session["MaxAmount"], session["Metro"], session['userId'],
                                       session['ren'])
             if Ap is not None:
-                del session["eer"]
+                if "eer" in session:
+                    del session["eer"]
                 # затычка пока нет алгоритма
                 session['roomID'] = Ap.id
                 price = Ap.price
@@ -199,7 +200,8 @@ def UserLab():
             Ap = EnterInSystem.getRec(db, session["MaxAmount"], session["Metro"], session['userId'], session['ren'])
 
             if Ap != None:
-                del session["eer"]
+                if "eer" in session:
+                    del session["eer"]
                 # затычка пока нет алгоритма
                 session['roomID'] = Ap.id
                 price = Ap.price

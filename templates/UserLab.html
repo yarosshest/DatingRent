@@ -91,11 +91,9 @@
 
                         <div class="mx-auto">
                             <ul  class="container">
-                              <div class="row row-cols-3">
+                              <div class="row">
                                   {% for i in ucan %}
-                                      <li class="carousel-item">
-                                          <li class="card-text" style="font-size: 25px">{{ i }}</li>
-                                      </li>
+                                      <li class="col mx-2" style="font-size: 25px">{{ i }}</li>
                                   {% endfor %}
                               </div>
                             </ul>
@@ -103,11 +101,9 @@
 
                         <div class="mx-auto">
                             <ul  class="container">
-                              <div class="row row-cols-3">
+                              <div class="row">
                                   {% for i in items %}
-                                      <li class="carousel-item">
-                                          <li class="card-text">{{ i }}</li>
-                                      </li>
+                                      <li class="col mx-2">{{ i }}</li>
                                   {% endfor %}
                               </div>
                             </ul>

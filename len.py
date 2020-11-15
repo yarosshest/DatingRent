@@ -8,7 +8,7 @@ mystem = Mystem()
 russian_stopwords = stopwords.words("russian")
 
 
-def preprocess_text(text): # функция от бога, буду молиться на человека, подарившего мне ее
+def preprocess_text(text):  # функция от бога, буду молиться на человека, подарившего мне ее
     tokens = mystem.lemmatize(text.lower())
     tokens = [token for token in tokens if token not in russian_stopwords \
               and token != " " \
@@ -19,8 +19,8 @@ def preprocess_text(text): # функция от бога, буду молить
     return text
 
 
-class lemTread (Thread):
-    def __init__(self,db, apId, tegs):
+class lemTread(Thread):
+    def __init__(self, db, apId, tegs):
         Thread.__init__(self)
         self.db = db
         self.Ap = apId
@@ -29,19 +29,33 @@ class lemTread (Thread):
     def run(self):
         lem = preprocess_text(self.tegs)
         self.db.PushLemon(self.Ap, lem)
+        print("done %(self.Ap)" % self.Ap)
 
 
 if __name__ == '__main__':
     db = EnterInSystem.createBd()
     list = db.pull_ap_lem()
     treds = []
+
+    n = 20
+    treds = []
     for ap in list:
-        treds.append(lemTread(db, ap[0], ap[1]))
+        if len(treds) < n:
+            tread = lemTread(db, ap[0], ap[1])
+            tread.start()
+            treds.append(tread)
+        else:
+            for t in treds:
+                t.join()
+            treds = []
 
-    for t in treds:
-        t.start()
-
-    for t in treds:
-        t.join()
+    # for ap in list:
+    #     treds.append(lemTread(db, ap[0], ap[1]))
+    #
+    # for t in treds:
+    #     t.start()
+    #
+    # for t in treds:
+    #     t.join()
 
     print("lem done")
