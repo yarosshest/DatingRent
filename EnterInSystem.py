@@ -84,13 +84,10 @@ class Links(Base):
 
 # Логика работы с БД
 class DatabaseFuction(object):
-    def __init__(self):
-        self.Session = sessionmaker(bind=engine)
-
     # Вход в сиситему пользователя
     def Login(self, Log, Pass):
         Exist = False
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         for instance in session.query(Users.Login, Users.Password, Users.id):
             if (instance.Login == Log) and (instance.Password == Pass):
                 Exist = True
@@ -99,7 +96,7 @@ class DatabaseFuction(object):
 
     # Регистрация ползователя
     def Register(self, Log, Pass):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         Exist = False
         for instance in session.query(Users.Login):
             if instance.Login == Log:
@@ -117,7 +114,7 @@ class DatabaseFuction(object):
 
     # Квартира по id
     def RoomForId(self, id):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         ab = Apartments()
         ab = session.query(Apartments).filter(Apartments.id == id).first()
         session.close()
@@ -125,14 +122,14 @@ class DatabaseFuction(object):
 
     # Оценка квартиры
     def Rate(self, idU, idA, rateScore):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         rate = Rates(idU, idA, rateScore)
         session.add(rate)
         session.commit()
         session.close()
 
     def re_rate(self, idU, idA, rateScore):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         rate = session.query(Rates).filter(Rates.Users_id == idU, Rates.Apartments_id == idA).first()
         rate.rate = rateScore
         session.add(rate)
@@ -141,7 +138,7 @@ class DatabaseFuction(object):
 
     # Получение id пользователя
     def UserId(self, Log):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         for instance in session.query(Users.Login, Users.Password, Users.id):
             if (instance.Login == Log):
                 id = instance.id
@@ -149,7 +146,7 @@ class DatabaseFuction(object):
         return id
 
     def dbUpd(self):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         for instance in session.query(Apartments):
             instance.tegs = instance.items + instance.ucan + instance.discription
             session.commit()
@@ -157,7 +154,7 @@ class DatabaseFuction(object):
 
     # добавление квартиры
     def addRoomList(self, price, address, undergrounds, discription, photo, room, area, link):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         NewRoom = Apartments(price, address, undergrounds, discription, photo, room, area, link)
 
         session.add(NewRoom)
@@ -165,14 +162,14 @@ class DatabaseFuction(object):
         session.close()
 
     def addRoom(self, room):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         session.add(room)
         session.commit()
         session.close()
 
     # Добавление ссылки в таблицу
     def addLink(self, link):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
 
         NewLink = Links(link)
 
@@ -182,7 +179,7 @@ class DatabaseFuction(object):
 
     # Получение всех ссылок
     def getAllLinks(self):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         l = []
         for instance in session.query(Links.link):
             l.append(instance.link)
@@ -192,7 +189,7 @@ class DatabaseFuction(object):
 
     # Получение всех пользователей
     def getAllRate(self):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         l = []
         for instance in session.query(Rates):
             l.append(instance)
@@ -202,7 +199,7 @@ class DatabaseFuction(object):
 
     # Проверка дублирования ссылки
     def linkChek(self, link):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         r = session.query(Links).filter(Links.link == link)
         if r.count() >= 1:
             session.close()
@@ -214,7 +211,7 @@ class DatabaseFuction(object):
 
     # Проверка дублирования квартиры
     def RoomChek(self, link):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         r = session.query(Apartments).filter(Apartments.link == link)
         A = r.count()
         if A >= 1:
@@ -225,7 +222,7 @@ class DatabaseFuction(object):
             return True
 
     def allNotRate(self, pice, metro, userId, ren):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         response = []
         list = session.query(Apartments).filter(Apartments.price <= pice,
                                                 Apartments.undergrounds.ilike("%" + metro + "%"),
@@ -245,7 +242,7 @@ class DatabaseFuction(object):
         return response
 
     def allRate(self, userId):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         response = []
         list = session.query(Apartments).all()
         rate = []
@@ -259,7 +256,7 @@ class DatabaseFuction(object):
         return response
 
     def allApDislike(self, userId):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         response = []
         list = session.query(Apartments).all()
         rate = []
@@ -273,7 +270,7 @@ class DatabaseFuction(object):
         return response
 
     def allAplike(self, userId):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         response = []
         list = session.query(Apartments).all()
         rate = []
@@ -287,7 +284,7 @@ class DatabaseFuction(object):
         return response
 
     def getForVector(self, vector):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         list = session.query(Apartments).all()
 
         for i in list:
@@ -298,7 +295,7 @@ class DatabaseFuction(object):
         return responce
 
     def PushLemon(self, apId, lem):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         list = session.query(Apartments).filter(Apartments.id == apId)
         ap = list.first()
         ap.tegLem = lem
@@ -306,7 +303,7 @@ class DatabaseFuction(object):
         session.close()
 
     def pull_ap_lem(self):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         list = session.query(Apartments).all()
         reply = []
         for ap in list:
@@ -317,7 +314,7 @@ class DatabaseFuction(object):
         return reply
 
     def vectorize(self):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         tfidf = TfidfVectorizer(stop_words=None)
         list = session.query(Apartments).all()
         all = []
@@ -330,14 +327,14 @@ class DatabaseFuction(object):
         session.close()
 
     def getVector(self, id):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         ap = session.query(Apartments.vector).filter(Apartments.id == id)
         ap = ap.first()
         session.close()
         return ap
 
     def dellLink(self, link):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         lin = session.query(Links).filter(Links.link == link)
         lin = lin.first()
         session.delete(lin)
@@ -345,13 +342,13 @@ class DatabaseFuction(object):
         session.close()
 
     def colRate(self, userId):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         rated = session.query(Rates).filter(Rates.Users_id == userId, Rates.rate == 1)
         session.close()
         return rated.count()
 
     def randFiltAp(self, pice, metro, ren):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         list = session.query(Apartments).filter(Apartments.price <= pice,
                                                 Apartments.undergrounds.ilike("%" + metro + "%"),
                                                 Apartments.ren == ren).all()
@@ -359,7 +356,7 @@ class DatabaseFuction(object):
         return random.choice(list)
 
     def colFilt(self, pice, metro, ren):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         lst = session.query(Apartments).filter(Apartments.price <= pice,
                                                 Apartments.undergrounds.ilike("%" + metro + "%"),
                                                 Apartments.ren == ren).all()
@@ -367,7 +364,7 @@ class DatabaseFuction(object):
         return len(lst)
 
     def pull_ap_ren(self):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         lst = session.query(Apartments).all()
         reply = []
         for ap in lst:
@@ -377,7 +374,7 @@ class DatabaseFuction(object):
         return reply
 
     def push_ren(self, ap_id, ren):
-        session = self.Session()
+        session = sessionmaker(bind=engine)()
         lst = session.query(Apartments).filter(Apartments.id == ap_id)
         ap = lst.first()
         ap.ren = ren
@@ -389,6 +386,8 @@ def getRec(DBase, pice, metro, userId, ren):
     if DBase.colFilt(pice, metro, ren) > 0:
         if DBase.colRate(userId) > 0:
             responce = DBase.RoomForId(srvn.getRoom(pice, metro, userId, ren))
+            if responce is None:
+                responce = "Все квартиры с данными характеристиками оценены"
         else:
             responce = DBase.randFiltAp(pice, metro, ren)
     else:

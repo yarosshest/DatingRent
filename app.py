@@ -5,6 +5,10 @@ import EnterInSystem
 
 # инициализация веб приложения
 application = Flask(__name__)
+application.config.update({
+    'SQLALCHEMY_POOL_SIZE': None,
+    'SQLALCHEMY_POOL_TIMEOUT': None
+})
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir), autoescape=True)
@@ -143,6 +147,10 @@ def UserLab_GET():
         if session['Login']:
             Ap = EnterInSystem.getRec(db, session["MaxAmount"], session["Metro"], session['userId'],
                                       session['ren'])
+            if Ap == "Все квартиры с данными характеристиками оценены":
+                session['eer'] = "Все квартиры с данными характеристиками оценены"
+                return redirect(url_for('Filtr'))
+
             if Ap is not None:
                 if "eer" in session:
                     del session["eer"]
@@ -196,41 +204,12 @@ def UserLab():
 
             if "rate" in request.form:  # поиск
                 db.Rate(session['userId'], session['roomID'], bool(int(request.form['rate'])))
+                return redirect(url_for('UserLab_GET'))
 
-            Ap = EnterInSystem.getRec(db, session["MaxAmount"], session["Metro"], session['userId'], session['ren'])
-
-            if Ap != None:
-                if "eer" in session:
-                    del session["eer"]
-                # затычка пока нет алгоритма
-                session['roomID'] = Ap.id
-                price = Ap.price
-                undergrounds = Ap.undergrounds
-                discription = Ap.discription
-                room = Ap.room
-                photo = Ap.photo
-                area = Ap.area
-                address = Ap.address
-                ucan = Ap.ucan.split('/')
-                del ucan[len(ucan) - 1]
-                items = Ap.items.split('/')
-                del items[len(items) - 1]
-                l = photo.split()
-                photo1 = l[0]
-                del l[0]
-                return render_template('UserLab.html', price=price, address=address, undergrounds=undergrounds,
-                                       discription=discription,
-                                       photo1=photo1, photoAr=l, room=room, area=area, items=items, ucan=ucan)
-            # затычка пока нет алгоритма
-            else:
-                session["eer"] = "Квартир по вашим параметрам  не найдено"
-                return redirect(url_for('Filtr'))
         else:
             return render('login.html')
     else:
         return redirect(url_for('login'))
-
-
 
 
 @application.route("/LK", methods=['GET'])
@@ -327,9 +306,7 @@ def office_POST():
                     return redirect(url_for('Filtr_GET'))
 
                 if request.form['end'] == "exit":
-                    session['email'] = None
-                    session['password'] = None
-                    session['Login'] = False
+                    session.clear()
                     return redirect(url_for('login'))
 
             return render('office.html')

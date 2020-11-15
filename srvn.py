@@ -19,6 +19,8 @@ def getRoom(pice, metro, userId, ren):
             print("err vec "+str(i.id))
         else:
             listAp.append([i.id, i.vector.data])  # трансформация в кучу векторов эл питонячьего списка
+    if listAp == []:
+        return None
 
     for i in listAp:
         i[1] = float(linear_kernel(i[1], vectorpolz))
