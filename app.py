@@ -344,6 +344,10 @@ def Filtr_GET():
 def Filtr():
     if 'Login' in session:  # проверка на залогиненость
         if session['Login']:
+            if 'exit' in request.form:
+                session['eer'] = None
+                return redirect(url_for("office_GET"))
+
             if 'find' in request.form:
                 # получение фильтров
                 if 'MaxAmount' in request.form:
@@ -355,9 +359,6 @@ def Filtr():
                 if 'ren' in request.form:
                     session['ren'] = True
                 return redirect(url_for('UserLab'))
-            if 'exit' in request.form:
-                session['eer'] = None
-                return redirect(url_for("office_GET"))
         else:
             return render('login.html')
     else:
