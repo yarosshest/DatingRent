@@ -160,13 +160,8 @@ def UserLab_GET():
                     del session["eer"]
                 # затычка пока нет алгоритма
                 session['roomID'] = Ap.id
-                price = Ap.price
-                undergrounds = Ap.undergrounds
                 discription = Ap.discription
-                room = Ap.room
                 photo = Ap.photo
-                area = Ap.area
-                address = Ap.address
                 ucan = Ap.ucan.split('/')
                 del ucan[len(ucan) - 1]
                 items = Ap.items.split('/')
@@ -174,8 +169,7 @@ def UserLab_GET():
                 l = photo.split()
                 photo1 = l[0]
                 del l[0]
-                return render_template('UserLab.html', price=price, address=address, undergrounds=undergrounds,
-                                       discription=discription,photo1=photo1, photoAr=l, room=room, area=area,
+                return render_template('UserLab.html', Ap=Ap, discription=discription, photo1=photo1, photoAr=l,
                                        items=items, ucan=ucan)
             # затычка пока нет алгоритма
             else:

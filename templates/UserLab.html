@@ -76,18 +76,18 @@
                     </a>
                 </div>
                 <div class="card-body">
-                        <h3 class="card-title">{{ price }} ₽/мес.</h3>
+                        <h3 class="card-title">{{ Ap.price }} ₽/мес.</h3>
                         <div class="container">
                             <div class="row">
                                 <div class="col-sm">
-                                    <h5 class="card-title">{{ room }}</h5>
+                                    <h5 class="card-title">{{ Ap.room }}</h5>
                                 </div>
                                 <div class="col-sm">
-                                    <h5 class="card-title">{{ undergrounds }}</h5>
+                                    <h5 class="card-title">{{ Ap.undergrounds }}</h5>
                                 </div>
                             </div>
                         </div>
-                        <h6 class="card-title">{{ address }}</h6>
+                        <h6 class="card-title">{{ Ap.address }}</h6>
 
                         <div class="mx-auto">
                             <ul  class="container">
@@ -112,6 +112,7 @@
                         <p class="card-text">{{ discription }}</p>
                         <button class="btn btn-danger" name="rate" value="0">Dislike</button>
                         <button class="btn btn-success" name="rate" value="1">Like</button>
+                        <a href="{{ Ap.link }}" target='_blank'>на Циан </a>
                 </div>
 {#                <button class="btn btn-warning"  name="exit" value="exit">Выйти</button>#}
                 <button class="btn btn-primary" name="exit" value="UserOffice">Личный кабинет</button>
