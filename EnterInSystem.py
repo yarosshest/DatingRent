@@ -231,7 +231,7 @@ class DatabaseFuction(object):
         r = session.query(Apartments).filter(Apartments.link == link)
         err = session.query(Links.err).filter(Links.link == link).first()
 
-        if r.count() >= 1 or err:
+        if r.count() >= 1 or err == False:
             session.close()
             return False
         else:
