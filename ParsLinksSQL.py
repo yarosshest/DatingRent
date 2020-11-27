@@ -1,43 +1,33 @@
-from idlelib import browser
-
-import selenium
-from selenium import webdriver
-from selenium.webdriver import chrome
-from selenium.webdriver.android.webdriver import WebDriver
-from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from selenium import webdriver
-import urllib
 import time
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.webdriver import WebDriver
-import bs4
-import re
-from bs4 import BeautifulSoup
-import EnterInSystem
-import requests
 
 import EnterInSystem
 
 db = EnterInSystem.createBd()
 
 
+options = webdriver.ChromeOptions()
+options.binary_location = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+chrome_driver_binary = "D:\chromedriver_win32\chromedriver.exe"
+driver = webdriver.Chrome(chrome_driver_binary, chrome_options=options)
 
-driver: WebDriver = webdriver.Chrome('D:\\chromedriver_win32\\chromedriver.exe')
 
 driver.get("https://www.cian.ru/snyat-kvartiru/")
-driver.set_window_size(1920,1080)
+driver.set_window_size(1920, 1080)
 
-mini = 27000
+mini = 0
 maxi = 27000
 
-while maxi<7000000:
+while maxi<=10000000:
     try:
         driver.get("https://www.cian.ru/snyat-kvartiru/")
         driver.set_window_size(1920, 1080)  # разворачиваем страницу
 
         element_to_hover_over = driver.find_element_by_name('min')
-        hover = ActionChains(driver).move_to_element(element_to_hover_over)
+        hover = ActionChains(driver).move_to_element(*element_to_hover_over)
         hover.perform()  # вводим мин цену
         driver.find_element_by_id("min-0").click()
         driver.find_element_by_name('min').send_keys(mini)
@@ -65,11 +55,12 @@ while maxi<7000000:
             maxi += 50000
         else:
             mini = maxi + 1  # финальная цена
-            maxi = 7000000
+            maxi = 10000001
         j = 2
 
         flag = True
         while flag:
+            flag = True
             time.sleep(1)  # спим
             topcol = len(driver.find_elements_by_xpath(
                 '//*[contains(@data-name,"OfferCard")]'))  # количество ссылок на квартиры на странице
@@ -78,6 +69,7 @@ while maxi<7000000:
                 element_to_hover_over = driver.find_elements_by_xpath('//*[contains(@data-name,"OfferCard")]')[i]
                 hover = ActionChains(driver).move_to_element(
                     element_to_hover_over)  # наводимся на квартиру, иначе работать не будет
+                time.sleep(0.1)
                 try:
                     driver.find_elements_by_xpath('//*[@class="c6e8ba5398--header--1fV2A"]')[i]  # проверка на вшивость
                 except StaleElementReferenceException:
@@ -85,9 +77,10 @@ while maxi<7000000:
                 else:
                     href = driver.find_elements_by_xpath('//*[@class="c6e8ba5398--header--1fV2A"]')[i].get_attribute(
                         'href')  # тырим ссылку
-                    db.addLink(href)
-                    print(href)
-                    print()
+                    if db.linkChek(href):
+                        db.addLink(href)
+                        print(href)
+                        print()
                     time.sleep(0.02)  # спим
 
             cardcol = len(driver.find_elements_by_xpath(
@@ -96,24 +89,30 @@ while maxi<7000000:
                 element_to_hover_over = driver.find_elements_by_xpath('//*[@data-name="CardComponent"]')[
                     i]  # все аналогично, но html страницы другой
                 hover = ActionChains(driver).move_to_element(element_to_hover_over)
-
+                time.sleep(0.1)
                 href = driver.find_elements_by_xpath('//*[@class="_93444fe79c--link--39cNw"]')[i].get_attribute(
                     'href')  # довольно-таки бесячая хрень
-                db.addLink(href)
-                print(href)
-                print()
+                if db.linkChek(href):
+                    db.addLink(href)
+                    print(href)
+                    print()
             time.sleep(0.02)  # спим
 
             time.sleep(1)  # все еще спим
-            print(len(driver.find_elements_by_xpath('//*[@class ="_93444fe79c--list-itemLink--3o7_6"]')))
-            if len(driver.find_elements_by_xpath(
-                    '//*[@class ="_93444fe79c--list-itemLink--3o7_6"]')) + 1 < j:  # проверка на количество кнопок
+
+            lin_nu = driver.find_elements_by_xpath('//*[@class="_93444fe79c--list-itemLink--3o7_6"]')
+            num_lin = len(lin_nu)
+            print(num_lin) #//*[@id="frontend-serp"]/div/div[7]/div/ul/li[4]/a<a class=>6</a>
+            if num_lin + 1 < j:  # проверка на количество кнопок
                 flag = False
             else:
-                element_to_hover_over = driver.find_element_by_xpath(
-                    '//*[@class="_93444fe79c--list--HEGFW"]/li[' + str(j) + ']')
+                element_to_hover_over = lin_nu[j-2]
+                time.sleep(0.2)
                 hover = ActionChains(driver).move_to_element(element_to_hover_over)  # видим кнопку - нажимаем на кнопку
-                driver.find_element_by_xpath('//*[@class="_93444fe79c--list--HEGFW"]/li[' + str(j) + ']/a').click()
+                hover.perform()
+                driver.execute_script("arguments[0].scrollIntoView();", element_to_hover_over)
+                time.sleep(0.2)
+                lin_nu[j-2].click()
                 if j < 11:  # костыль
                     j += 1
                 time.sleep(1)  # спим

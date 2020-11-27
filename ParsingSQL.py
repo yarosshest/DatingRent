@@ -1,17 +1,11 @@
-from idlelib import browser
-
-from selenium import webdriver
-from selenium.webdriver import chrome
-from selenium.webdriver.android.webdriver import WebDriver
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 from selenium import webdriver
-import urllib
 import time
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.webdriver import WebDriver
 import EnterInSystem
-from len import preprocess_text
+
 db = EnterInSystem.createBd()
 
 chrome_options = Options()
@@ -154,7 +148,7 @@ for site in db.getAllLinks():
                 for i in price:
                     pri = pri + i
                 room.price = int(pri)
-                obshplo= obshplo.split()[0].replace(',', '.')
+                obshplo = obshplo.split()[0].replace(',', '.')
                 room.area = float(obshplo)
                 room.items = items
                 room.ucan = ucan
@@ -163,6 +157,6 @@ for site in db.getAllLinks():
                 db.addRoom(room)
                 print(site)
             except:
-                pass
+                db.add_par_err(site)
             # except OSError as err:
             #      print(err)

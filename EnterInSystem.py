@@ -77,6 +77,7 @@ class Links(Base):
     __tablename__ = 'Links'
     id = Column(Integer, primary_key=True)
     link = Column(String)
+    err = Column(Boolean)
 
     def __init__(self, link):
         self.link = link
@@ -209,17 +210,39 @@ class DatabaseFuction(object):
             session.close()
             return True
 
+        # Проверка дублирования ссылки
+
+    def del_double_link(self):
+        session = sessionmaker(bind=engine)()
+        lst = session.query(Links).all()
+        dct = []
+        for i in lst:
+            if i.link in dct:
+                session.delete(i)
+                print(i.id)
+                session.commit()
+            else:
+                dct.append(i.link)
+        session.close()
+
     # Проверка дублирования квартиры
     def RoomChek(self, link):
         session = sessionmaker(bind=engine)()
         r = session.query(Apartments).filter(Apartments.link == link)
-        A = r.count()
-        if A >= 1:
+        err = session.query(Links.err).filter(Links.link == link).first()
+
+        if r.count() >= 1 or err:
             session.close()
             return False
         else:
             session.close()
             return True
+
+    def add_par_err(self, link):
+        session = sessionmaker(bind=engine)()
+        r = session.query(Links).filter(Links.link == link).first()
+        r.err = True
+        session.commit()
 
     def allNotRate(self, pice, metro, userId, ren):
         session = sessionmaker(bind=engine)()
@@ -433,4 +456,5 @@ def createBd():
 
 if __name__ == '__main__':
     db = createBd()
-    db.vectorize()
+    # db.vectorize()
+    db.del_double_link()
