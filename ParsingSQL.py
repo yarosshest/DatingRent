@@ -41,9 +41,10 @@ for site in db.getAllLinks():
                     i].text + ' '  # сборка адресо в целостный вид
             colcomn = driver.find_element_by_xpath('//*[@data-name="OfferTitle"]').text  # кол-во комнат
             #
-            metro = driver.find_element_by_xpath('//*[contains(@class,"underground_link")]').text  # метро
-            metrotime = driver.find_element_by_xpath(
-                '//*[contains(@class,"underground_time")]').text  # время до метра
+            metro = driver.find_elements_by_xpath('//*[@data-name="renderUnderground"]')  # метро
+            undergrounds = ''
+            for i in metro:
+                undergrounds += i.text + ' '
 
             fotoochka = ''  # инициализация
             # print(obshplo)
@@ -103,7 +104,6 @@ for site in db.getAllLinks():
                 # print(fotoochka)
                 time.sleep(0.2)  # прогрузиться, потом и поговорим
 
-            undergrounds = metro + " " + metrotime
 
             room = EnterInSystem.Apartments()
 
